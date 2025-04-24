@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  python-tf:
+    build:
+      context: ..
+      dockerfile: ./.devcontainer/Dockerfile
+    container_name: python-tf
+    env_file: .env
+    volumes:
+      - ..:/workspaces
+      - ./.bashrc:/home/vscode/.bashrc
+      - ~/.gitconfig:/home/vscode/.gitconfig:ro
+      - ~/.config/gcloud/:/home/.config/gcloud:ro
+    command: sleep infinity

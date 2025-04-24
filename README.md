@@ -1,2 +1,2 @@
-# data-ai-lab
-Building expert-level data engineering + AI skills in 12 months
+# MSc in Data Engineering & AI (Self-Designed)
+A 12-month program focused on building real-world expertise in data engineering and machine learning using GCP, Python, and modern tooling.
