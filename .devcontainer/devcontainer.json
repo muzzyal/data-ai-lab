@@ -8,7 +8,8 @@
             "extensions": [
                 "ms-python.python",
                 "ms-python.black-formatter",
-                "njpower.autodocstring"
+                "njpower.autodocstring",
+                "streetsidesoftware.code-spell-checker"
             ],
             "settings": {
                 "python.testing.pytestArgs": [
