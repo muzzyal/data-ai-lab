@@ -1,0 +1,33 @@
+{
+    "name": "data-ai-lab",
+    "dockerComposeFile": "./docker-compose.yml",
+    "service": "python-tf",
+    "workspaceFolder": "/workspaces",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.black-formatter",
+                "njpower.autodocstring",
+                "streetsidesoftware.code-spell-checker"
+            ],
+            "settings": {
+                "python.testing.pytestArgs": [
+                    "/workspaces"
+                ],
+                "python.testing.unittestEnabled": false,
+                "python.testing.pytestEnabled": true,
+                "editor.rules": [
+                    {
+                        "column": 120,
+                        "colour": "red"
+                    }
+                ]
+            }
+        }
+    },
+    "containerEnv": {
+        "SHELL": "zsh"
+    },
+    "postCreateCommand": "pre-commit install"
+}
