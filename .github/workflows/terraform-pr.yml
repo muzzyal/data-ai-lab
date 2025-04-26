@@ -28,9 +28,6 @@ jobs:
           echo "Showing gcp-key.json contents in ${{ github.workspace }}/gcp-key.json..."
           cat ${{ github.workspace }}/gcp-key.json
 
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
