@@ -21,15 +21,20 @@ jobs:
 
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
+        working-directory: infra
 
       - name: Terraform Init
         run: terraform init
+        working-directory: infra
 
       - name: Terraform Validate
         run: terraform validate
+        working-directory: infra
 
       - name: Run tfsec (Security Analysis)
         uses: aquasecurity/tfsec-action@v1.0.0
+        working-directory: infra
 
       - name: Terraform Plan
         run: terraform plan -no-color
+        working-directory: infra
