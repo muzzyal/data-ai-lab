@@ -15,12 +15,11 @@ jobs:
 
     steps:
 
-      - uses: actions/checkout@v4
-      - name: Retrieve the secret and decode it to a file
+      - name: Retrieve the secret and write to a file
         env:
-          GCP_SA_KEY_BASE64: ${{ secrets.GCP_SA_KEY }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
         run: |
-          echo "$GCP_SA_KEY_BASE64" | base64 --decode > $GOOGLE_APPLICATION_CREDENTIALS
+          echo "$GCP_SA_KEY" > $GOOGLE_APPLICATION_CREDENTIALS
 
       - name: Checkout Code
         uses: actions/checkout@v4
