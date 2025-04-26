@@ -24,6 +24,7 @@ jobs:
 
       - name: Show contents of gcp-key.json
         run: |
+          cd infra
           echo "Showing gcp-key.json contents..."
           cat ${{ github.workspace }}/gcp-key.json
 
