@@ -10,7 +10,15 @@ jobs:
     name: Terraform Apply Changes
     runs-on: ubuntu-latest
 
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+
     steps:
+
+      - name: Decode and write GCP SA key
+        run: |
+          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > $GOOGLE_APPLICATION_CREDENTIALS
+
       - name: Checkout Code
         uses: actions/checkout@v4
 
