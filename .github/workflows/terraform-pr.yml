@@ -1,0 +1,35 @@
+name: Terraform Pull Request CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform-checks:
+    name: Terraform Security & Format Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Run tfsec (Security Analysis)
+        uses: aquasecurity/tfsec-action@v1.0.0
+
+      - name: Terraform Plan
+        run: terraform plan -no-color
