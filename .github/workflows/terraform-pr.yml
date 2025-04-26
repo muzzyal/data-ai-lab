@@ -17,7 +17,7 @@ jobs:
 
       - name: Decode and write GCP SA key
         run: |
-          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > $GOOGLE_APPLICATION_CREDENTIALS
+          base64 --decode "${{ secrets.GCP_SA_KEY }}" > $GOOGLE_APPLICATION_CREDENTIALS
 
       - name: Checkout Code
         uses: actions/checkout@v4
