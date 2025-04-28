@@ -1,6 +1,8 @@
 locals {
   required_services = [
-    "dataform"
+    "storage",
+    "compute",
+    "iam"
   ]
 }
 

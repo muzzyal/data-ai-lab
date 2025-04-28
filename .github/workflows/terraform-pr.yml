@@ -20,13 +20,7 @@ jobs:
         env:
           GCP_SA_KEY_BASE64: ${{ secrets.GCP_SA_KEY }}
         run: |
-          echo "$GCP_SA_KEY_BASE64" | base64 --decode > ${{ github.workspace }}/gcp-key.json
-
-      - name: Show contents of gcp-key.json
-        run: |
-          cd infra
-          echo "Showing gcp-key.json contents in ${{ github.workspace }}/gcp-key.json..."
-          cat ${{ github.workspace }}/gcp-key.json
+          echo "$GCP_SA_KEY_BASE64" | base64 --decode > $GOOGLE_APPLICATION_CREDENTIALS
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
