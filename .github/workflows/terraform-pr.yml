@@ -1,0 +1,50 @@
+name: Terraform Pull Request CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform-checks:
+    name: Terraform Security & Format Checks
+    runs-on: ubuntu-latest
+
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+
+    steps:
+
+      - uses: actions/checkout@v4
+      - name: Decode GCP service account key and set env
+        run: |
+          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > "${{ github.workspace }}/gcp-key.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/gcp-key.json" >> $GITHUB_ENV
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
+
+      - name: Terraform Format Check
+        run:  |
+          cd infra
+          terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run:  |
+          cd infra
+          terraform init
+
+      - name: Terraform Validate
+        run:  |
+          cd infra
+          terraform validate
+
+      - name: Run tfsec (Security Analysis)
+        uses: aquasecurity/tfsec-action@v1.0.0
+
+      - name: Terraform Plan
+        run:  |
+          cd infra
+          terraform plan -no-color

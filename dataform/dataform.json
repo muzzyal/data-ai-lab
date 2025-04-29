@@ -1,0 +1,14 @@
+{
+    "warehouse": "bigquery",
+    "defaultSchema": "msc_data",
+    "assertionSchema": "msc_assertions",
+    "defaultDatabase": "your-gcp-project-id",
+    "gcloudProjectId": "your-gcp-project-id",
+    "location": "europe-west2",
+    "defaultDataset": "msc_data",
+    "defaultAssertionDataset": "msc_assertions",
+    "includes": ["definitions/**/*.sqlx", "definitions/**/*.js"],
+    "vars": {
+      "environment": "dev"
+    }
+}
