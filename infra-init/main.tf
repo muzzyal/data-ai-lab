@@ -16,6 +16,10 @@ resource "google_project_iam_member" "build_admin_editor" {
   member  = "serviceAccount:${google_service_account.build_admin.email}"
 }
 
+resource "google_service_account_key" "build_service_account_key" {
+  service_account_id = google_service_account.build_admin.id
+}
+
 module "project_services" {
   source     = "../infra/modules/project_services"
   project_id = var.project_id

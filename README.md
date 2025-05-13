@@ -34,11 +34,11 @@ A dedicated `infra-init` folder is used to initialise the Terraform backend. Thi
 
 Initialising the GCP projects terraform infrastructure is automated by the following Make commands:
 - `make tf-init-infra-init` will initialise terraform
-- `make tf-plan-infra-init` will present a plan for the terraform apply, there will be eight objects to deploy
-- `make tf-apply-infra-init` will prompt for a response, type `yes` and it will deploy the eight objects
+- `make tf-plan-infra-init` will present a plan for the terraform apply, there will be ten objects to deploy
+- `make tf-apply-infra-init` will prompt for a response, type `yes` and it will deploy the ten objects
 - Once the bucket is created the state file needs to be migrated to the GCS bucket so the infrastructure config is entirely stored in the cloud. The `backend.tf` which usually exists in a terraform project doesn't initially exist to default the backend to local. Run `make create-backend-infra-init` to create it.
 - `make migrate-state-infra-init` will prompt for a response, type `yes` to migrate the state file to GCS
 
 ### GitHub Actions Set-up
 
-In the GCP console, navigate to IAM > Service Accounts and select the build admin service account. Once in there select `Keys`, `Add key` and `Create new key`, then create a JSON key type. This will create a key and save it locally. Locate the key and copy the contents. In the GitHub repo, navigate to `Settings` > `Secrets and variables` > `Actions` and add a `New repository secret` called `GCP_SA_KEY` and paste the security key you copied. Be sure to delete the downloaded security key.
+The running of the above terraform deployment will result in the output of a file located at `infra-init/sa-key-base64.txt`. This file contains a base64 encoded service account key, copy the contents of this file. In the GitHub repo, navigate to `Settings` > `Secrets and variables` > `Actions` and add a `New repository secret` called `GCP_SA_KEY` and paste the encoded security key you copied. Be sure to delete the downloaded `infra-init/sa-key-base64.txt` file.
