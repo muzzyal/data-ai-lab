@@ -15,12 +15,11 @@ jobs:
 
     steps:
 
-      - name: Decode and write GCP SA key
+      - uses: actions/checkout@v4
+      - name: Decode GCP service account key and set env
         run: |
-          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > $GOOGLE_APPLICATION_CREDENTIALS
-
-      - name: Checkout Code
-        uses: actions/checkout@v4
+          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > "${{ github.workspace }}/gcp-key.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/gcp-key.json" >> $GITHUB_ENV
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
