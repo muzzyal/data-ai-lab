@@ -10,6 +10,6 @@ services:
     volumes:
       - ..:/workspaces
       - ./.bashrc:/home/vscode/.bashrc
-      - ~/.gitconfig:/home/vscode/.gitconfig:ro
+      - ~/.gitconfig:/home/vscode/.gitconfig:rw
       - ~/.config/gcloud/:/home/.config/gcloud:ro
     command: sleep infinity

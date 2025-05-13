@@ -9,3 +9,5 @@ RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/sh
 && echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(. /etc/os-release; echo "$VERSION_CODENAME") main" \
 | tee /etc/apt/sources.list.d/hashicorp.list \
 && apt-get update && apt-get install -y terraform
+
+RUN git config --global --add safe.directory /workspaces
