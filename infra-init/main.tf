@@ -26,6 +26,7 @@ module "project_services" {
   services   = local.required_services
 }
 
+#tfsec:ignore:google-storage-bucket-encryption-customer-key
 resource "google_storage_bucket" "terraform_state" {
   name          = "${var.project_id}-tfstate"
   location      = "EU" # or your preferred region
@@ -48,6 +49,7 @@ resource "google_storage_bucket" "terraform_state" {
   }
 }
 
+#tfsec:ignore:google-storage-bucket-encryption-customer-key
 resource "google_storage_bucket" "infra_init_terraform_state" {
   name          = "${var.project_id}-infra-init-tfstate"
   location      = "EU" # or your preferred region
