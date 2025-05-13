@@ -1,3 +1,12 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.terraform.lock*
+crash.log
+infra-init/backend.tf
+sa-key-base64.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -128,7 +137,6 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
