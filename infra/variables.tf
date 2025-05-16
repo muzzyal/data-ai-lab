@@ -1,5 +1,6 @@
 locals {
   required_services = [
+    "cloudresourcemanager",
     "dataform"
   ]
 }
@@ -7,6 +8,10 @@ locals {
 variable "project_id" {
   description = "GCP Project ID"
   type        = string
+}
+variable "project_no" {
+  description = "GCP Project Number"
+  type        = number
 }
 variable "default_region" {
   description = "Default GCP region"

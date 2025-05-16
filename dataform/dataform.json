@@ -1,14 +1,9 @@
 {
     "warehouse": "bigquery",
-    "defaultSchema": "msc_data",
-    "assertionSchema": "msc_assertions",
-    "defaultDatabase": "your-gcp-project-id",
-    "gcloudProjectId": "your-gcp-project-id",
+    "defaultSchema": "msc_data_ai",
+    "assertionSchema": "msc_data_ai_assertions",
+    "defaultDatabase": "muz-designed-msc-data-ai-2025",
+    "gcloudProjectId": "muz-designed-msc-data-ai-2025",
     "location": "europe-west2",
-    "defaultDataset": "msc_data",
-    "defaultAssertionDataset": "msc_assertions",
-    "includes": ["definitions/**/*.sqlx", "definitions/**/*.js"],
-    "vars": {
-      "environment": "dev"
-    }
+    "includes": ["definitions/**/*.sqlx"]
 }
