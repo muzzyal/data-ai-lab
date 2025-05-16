@@ -16,6 +16,12 @@ resource "google_project_iam_member" "build_admin_editor" {
   member  = "serviceAccount:${google_service_account.build_admin.email}"
 }
 
+resource "google_project_iam_member" "secret_manager_admin" {
+  project = var.project_id
+  role    = "roles/secretmanager.admin"
+  member  = "serviceAccount:${google_service_account.build_admin.email}"
+}
+
 resource "google_service_account_key" "build_service_account_key" {
   service_account_id = google_service_account.build_admin.id
 }
