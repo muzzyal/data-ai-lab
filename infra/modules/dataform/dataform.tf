@@ -18,6 +18,6 @@ resource "google_dataform_repository" "dataform_repository" {
   }
 
   depends_on = [
-    moduel.github_token_secret
+    module.github_token_secret
   ]
 }
