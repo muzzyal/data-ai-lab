@@ -1,7 +1,8 @@
 locals {
   required_services = [
     "cloudresourcemanager",
-    "dataform"
+    "dataform",
+    "secretmanager"
   ]
 }
 
