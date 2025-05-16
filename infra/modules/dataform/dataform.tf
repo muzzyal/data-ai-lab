@@ -10,6 +10,7 @@ resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
 
   project      = var.project_id
+  region       = "europe-west2"
   name         = "data_ai_lab_repo"
   display_name = "data_ai_lab_repo"
 
