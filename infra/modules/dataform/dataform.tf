@@ -7,7 +7,7 @@ module "github_token_secret" {
 }
 
 resource "google_dataform_repository" "dataform_repository" {
-  provider     = google-beta
+  project      = var.project_id
   name         = "data_ai_lab_repo"
   display_name = "data_ai_lab_repo"
 
