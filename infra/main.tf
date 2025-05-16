@@ -10,6 +10,6 @@ module "dataform" {
   secret_id    = "git-hub-token"
   git_repo_url = "https://github.com/muzzyal/data-ai-lab.git"
   secret_members = [
-    "serviceAccount:service-${data.google_project.project.number}@gcp-sa-dataform.iam.gserviceaccount.com"
+    "serviceAccount:service-${var.project_no}@gcp-sa-dataform.iam.gserviceaccount.com"
   ]
 }
