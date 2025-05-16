@@ -1,3 +1,8 @@
+variable "project_id" {
+  description = "GCP Project ID"
+  type        = string
+}
+
 variable "secret_id" {
   description = "ID for the secret"
   type        = string

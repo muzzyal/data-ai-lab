@@ -1,7 +1,9 @@
 module "github_token_secret" {
-  source    = "../secrets"
-  secret_id = var.secret_id
-  members   = var.secret_members
+  source = "../secrets"
+
+  project_id = var.project_id
+  secret_id  = var.secret_id
+  members    = var.secret_members
 }
 
 # resource "google_dataform_repository" "dataform_repository" {

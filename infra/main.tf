@@ -7,6 +7,7 @@ module "project_services" {
 module "dataform" {
   source = "./modules/dataform"
 
+  project_id   = var.project_id
   secret_id    = "git-hub-token"
   git_repo_url = "https://github.com/muzzyal/data-ai-lab.git"
   secret_members = [
