@@ -1,5 +1,5 @@
 module "github_token_secret" {
-  source    = "../modules/secrets"
+  source    = "../secrets"
   secret_id = var.secret_id
   members   = var.secret_members
 }
