@@ -41,4 +41,4 @@ Initialising the GCP projects terraform infrastructure is automated by the follo
 
 ### GitHub Actions Set-up
 
-The running of the above terraform deployment will result in the output of a file located at `infra-init/sa-key-base64.txt`. This file contains a base64 encoded service account key, copy the contents of this file. In the GitHub repo, navigate to `Settings` > `Secrets and variables` > `Actions` and add a `New repository secret` called `GCP_SA_KEY` and paste the encoded security key you copied. Be sure to delete the downloaded `infra-init/sa-key-base64.txt` file.
+The running of the above terraform deployment will result in the output of a file located at `infra-init/sa-key-base64.txt`. This file contains a base64 encoded service account key, copy the contents of this file. In the GitHub repo, navigate to `Settings` > `Secrets and variables` > `Actions` and add a `New repository secret` called `GCP_SA_KEY` and paste the encoded security key you copied. Be sure to delete the `infra-init/sa-key-base64.txt` file.

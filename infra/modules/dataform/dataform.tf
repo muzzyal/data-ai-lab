@@ -6,6 +6,12 @@ module "github_token_secret" {
   members    = var.secret_members
 }
 
+resource "google_project_iam_member" "bq_job_user" {
+  project = var.project_id
+  role    = "roles/bigquery.jobUser"
+  member  = "serviceAccount:service-${var.project_no}@gcp-sa-dataform.iam.gserviceaccount.com"
+}
+
 resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
 

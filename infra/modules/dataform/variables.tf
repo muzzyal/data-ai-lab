@@ -22,3 +22,8 @@ variable "region" {
   description = "Dataform region"
   type        = string
 }
+
+variable "project_no" {
+  description = "GCP Project Number"
+  type        = number
+}
