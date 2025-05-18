@@ -1,9 +1,0 @@
-{
-    "warehouse": "bigquery",
-    "defaultSchema": "msc_data_ai",
-    "assertionSchema": "msc_data_ai_assertions",
-    "defaultDatabase": "muz-designed-msc-data-ai-2025",
-    "gcloudProjectId": "muz-designed-msc-data-ai-2025",
-    "location": "europe-west2",
-    "includes": ["definitions/**/*.sqlx"]
-}
