@@ -10,7 +10,7 @@ resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
 
   project      = var.project_id
-  region       = "europe-west2"
+  region       = var.region
   name         = "data_ai_lab_repo"
   display_name = "data_ai_lab_repo"
 
@@ -23,4 +23,13 @@ resource "google_dataform_repository" "dataform_repository" {
   depends_on = [
     module.github_token_secret
   ]
+}
+
+resource "google_dataform_workspace" "main" {
+  provider     = google-beta
+  project      = var.project_id
+  region       = var.region
+  repository   = google_dataform_repository.dataform_repository.name
+  workspace_id = "main-workspace"
+  branch       = "main"
 }

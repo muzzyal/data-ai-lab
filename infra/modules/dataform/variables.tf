@@ -17,3 +17,8 @@ variable "git_repo_url" {
   description = "Git repo URL to link to dataform"
   type        = string
 }
+
+variable "region" {
+  description = "Dataform region"
+  type        = string
+}
