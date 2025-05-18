@@ -24,12 +24,3 @@ resource "google_dataform_repository" "dataform_repository" {
     module.github_token_secret
   ]
 }
-
-resource "google_dataform_workspace" "main" {
-  provider     = google-beta
-  project      = var.project_id
-  region       = var.region
-  repository   = google_dataform_repository.dataform_repository.name
-  workspace_id = "main-workspace"
-  branch       = "main"
-}
