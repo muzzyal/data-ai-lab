@@ -1,0 +1,5 @@
+defaultProject: muz-designed-msc-data-ai-2025
+defaultLocation: EU
+defaultDataset: msc_data_ai
+defaultAssertionDataset: msc_data_ai_assertions
+dataformCoreVersion: 3.0.0
