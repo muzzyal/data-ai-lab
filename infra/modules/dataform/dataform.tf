@@ -6,16 +6,17 @@ module "github_token_secret" {
   members    = var.secret_members
 }
 
-resource "google_project_iam_member" "bq_job_user" {
-  project = var.project_id
-  role    = "roles/bigquery.jobUser"
-  member  = "serviceAccount:service-${var.project_no}@gcp-sa-dataform.iam.gserviceaccount.com"
-}
+resource "google_project_iam_member" "dataform_bigquery_roles" {
+  for_each = toset([
+    "roles/bigquery.jobUser",
+    "roles/bigquery.dataEditor",
+    "roles/bigquery.dataViewer",
+    "roles/bigquery.metadataViewer"
+  ])
 
-resource "google_bigquery_dataset_iam_member" "allow_metadata_view" {
-  dataset_id = "msc_data_ai"
-  role       = "roles/bigquery.metadataViewer"
-  member     = "serviceAccount:service-${var.project_no}@gcp-sa-dataform.iam.gserviceaccount.com"
+  project = var.project_id
+  role    = each.key
+  member  = "serviceAccount:service-${var.project_no}@gcp-sa-dataform.iam.gserviceaccount.com"
 }
 
 resource "google_dataform_repository" "dataform_repository" {
