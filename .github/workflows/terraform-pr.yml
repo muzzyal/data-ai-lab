@@ -4,19 +4,32 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - 'terraform/**'
+      - 'definitions/**'
+      - '.github/workflows/ci.yml'
+
+name: Combined Terraform & Dataform CI/CD
+
+on:
+  pull_request:
+    paths:
+      - 'infra/**'    # Terraform directory
+      - 'dataform/**'  # Dataform directory
+      - '.github/workflows/**.yml'  # Workflow changes
 
 jobs:
   terraform-checks:
     name: Terraform Security & Format Checks
+    if: contains(github.event.pull_request.changed_files, 'infra/') || contains(github.event.pull_request.changed_files, '.github/workflows/')
     runs-on: ubuntu-latest
 
     env:
       GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
 
     steps:
-
       - uses: actions/checkout@v4
-      - name: Decode GCP service account key and set env
+      - name: Decode GCP service account key
         run: |
           echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > "${{ github.workspace }}/gcp-key.json"
           echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/gcp-key.json" >> $GITHUB_ENV
@@ -27,24 +40,68 @@ jobs:
           terraform_version: 1.7.5
 
       - name: Terraform Format Check
-        run:  |
+        run: |
           cd infra
           terraform fmt -check -recursive
 
       - name: Terraform Init
-        run:  |
+        run: |
           cd infra
           terraform init
 
       - name: Terraform Validate
-        run:  |
+        run: |
           cd infra
           terraform validate
 
-      - name: Run tfsec (Security Analysis)
+      - name: Run tfsec
         uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          working_directory: infra
 
       - name: Terraform Plan
-        run:  |
+        run: |
           cd infra
           terraform plan -no-color
+
+  dataform-checks:
+    name: Dataform Validation
+    if: contains(github.event.pull_request.changed_files, 'definitions/')
+    runs-on: ubuntu-latest
+
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode GCP service account key
+        run: |
+          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > "${{ github.workspace }}/gcp-key.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/gcp-key.json" >> $GITHUB_ENV
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dataform
+        run: |
+          cd definitions
+          npm install -g @dataform/cli
+          npm install
+
+      - name: Dataform Compile
+        run: |
+          cd definitions
+          dataform compile
+
+      - name: Dataform Test
+        run: |
+          cd definitions
+          dataform test
+
+      - name: Dry Run Deployment
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd definitions
+          dataform run --dry-run
