@@ -6,9 +6,16 @@ module "github_token_secret" {
   members    = var.secret_members
 }
 
-resource "google_project_iam_member" "bq_job_user" {
+resource "google_project_iam_member" "dataform_bigquery_roles" {
+  for_each = toset([
+    "roles/bigquery.jobUser",
+    "roles/bigquery.dataEditor",
+    "roles/bigquery.dataViewer",
+    "roles/bigquery.metadataViewer"
+  ])
+
   project = var.project_id
-  role    = "roles/bigquery.jobUser"
+  role    = each.key
   member  = "serviceAccount:service-${var.project_no}@gcp-sa-dataform.iam.gserviceaccount.com"
 }
 
