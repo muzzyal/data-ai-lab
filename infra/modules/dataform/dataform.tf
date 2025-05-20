@@ -12,6 +12,12 @@ resource "google_project_iam_member" "bq_job_user" {
   member  = "serviceAccount:service-${var.project_no}@gcp-sa-dataform.iam.gserviceaccount.com"
 }
 
+resource "google_bigquery_dataset_iam_member" "allow_metadata_view" {
+  dataset_id = "msc_data_ai"
+  role       = "roles/bigquery.metadataViewer"
+  member     = "serviceAccount:service-${var.project_no}@gcp-sa-dataform.iam.gserviceaccount.com"
+}
+
 resource "google_dataform_repository" "dataform_repository" {
   provider = google-beta
 
