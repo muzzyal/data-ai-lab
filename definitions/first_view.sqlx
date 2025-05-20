@@ -1,0 +1,24 @@
+config {
+  type: "table",
+  columns: {
+    test: "A description for the test column", // Column descriptions are pushed to BigQuery.
+  }
+}
+
+SELECT 1 AS number
+
+UNION ALL
+
+SELECT 2 AS number
+
+UNION ALL
+
+SELECT 3 AS number
+
+UNION ALL
+
+SELECT 4 AS number
+
+UNION ALL
+
+SELECT 5 AS number

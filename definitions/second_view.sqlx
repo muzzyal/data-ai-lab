@@ -1,0 +1,3 @@
+config { type: "view" }
+
+SELECT number from ${ref("first_view")}
