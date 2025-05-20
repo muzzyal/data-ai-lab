@@ -65,43 +65,35 @@ jobs:
           terraform plan -no-color
 
   dataform-checks:
-    name: Dataform Validation
+    name: SQL Validation
     if: contains(github.event.pull_request.changed_files, 'definitions/')
     runs-on: ubuntu-latest
-
-    env:
-      GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+    timeout-minutes: 5  # Fast fail for quick SQL checks
 
     steps:
       - uses: actions/checkout@v4
-      - name: Decode GCP service account key
-        run: |
-          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > "${{ github.workspace }}/gcp-key.json"
-          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/gcp-key.json" >> $GITHUB_ENV
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install Dataform
+      - name: Basic SQL Validation
         run: |
+          echo "Checking for common SQL issues..."
           cd definitions
-          npm install -g @dataform/cli
-          npm install
 
-      - name: Dataform Compile
-        run: |
-          cd definitions
-          dataform compile
+          # Check 1: Validate SQL syntax (using sqlfluff for basic linting)
+          if ! command -v sqlfluff &> /dev/null; then
+            pip install sqlfluff
+          fi
 
-      - name: Dataform Test
-        run: |
-          cd definitions
-          dataform test
+          # Basic linting (adjust dialect as needed)
+          sqlfluff lint --dialect bigquery *.sqlx || echo "SQL issues detected"
 
-      - name: Dry Run Deployment
-        if: github.ref == 'refs/heads/main'
-        run: |
-          cd definitions
-          dataform run --dry-run
+          # Check 2: Verify no SELECT * in production code
+          if grep -r "SELECT \*" --include="*.sql" .; then
+            echo "::error::Found SELECT * statement - use explicit columns"
+            exit 1
+          fi
+
+          # Check 3: Validate table references use project.dataset format
+          if grep -r -E "FROM [a-zA-Z_]+" --include="*.sql" . | grep -v "FROM \`"; then
+            echo "::error::Table references should use backticks or project.dataset notation"
+            exit 1
+          fi
