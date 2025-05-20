@@ -1,4 +1,4 @@
-name: Terraform Pull Request CI
+name: Combined Terraform & Dataform CI/CD
 
 on:
   pull_request:
@@ -8,15 +8,6 @@ on:
       - 'terraform/**'
       - 'definitions/**'
       - '.github/workflows/ci.yml'
-
-name: Combined Terraform & Dataform CI/CD
-
-on:
-  pull_request:
-    paths:
-      - 'infra/**'    # Terraform directory
-      - 'dataform/**'  # Dataform directory
-      - '.github/workflows/**.yml'  # Workflow changes
 
 jobs:
   terraform-checks:
