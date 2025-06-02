@@ -47,7 +47,7 @@ module "project_services" {
 #tfsec:ignore:google-storage-bucket-encryption-customer-key
 resource "google_storage_bucket" "terraform_state" {
   name          = "${var.project_id}-tfstate"
-  location      = "EU" # or your preferred region
+  location      = "EU"
   storage_class = "STANDARD"
   project       = var.project_id
 

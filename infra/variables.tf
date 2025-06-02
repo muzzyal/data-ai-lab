@@ -4,6 +4,10 @@ locals {
     "dataform",
     "secretmanager"
   ]
+
+  builder_sa_email = "build-admin@muz-designed-msc-data-ai-2025.iam.gserviceaccount.com"
+
+  default_dataform_sa_member = "serviceAccount:service-${var.project_no}@gcp-sa-dataform.iam.gserviceaccount.com"
 }
 
 variable "project_id" {
