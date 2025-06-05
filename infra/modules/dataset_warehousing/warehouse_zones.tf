@@ -38,7 +38,7 @@ module "curated_dataset" {
 }
 
 module "analytics_dataset" {
-  source                      = "../dataset_template"
+  source                      = "../bigquery_dataset"
   dataset_name                = replace("${var.domain_name}_analytic", "-", "_")
   dataset_location            = var.location
   dataset_description         = "${var.domain_name} analytic dataset."
