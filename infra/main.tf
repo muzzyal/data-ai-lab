@@ -44,8 +44,8 @@ module "playground_project" {
   project_id                      = var.project_id
   project_no                      = var.project_no
   dataset_id                      = module.playground_datasets.raw_dataset_name
-  cloud_run_batch_ingest_version  = "0.1.0"
-  cloud_run_stream_ingest_version = "0.1.0"
+  cloud_run_batch_ingest_version  = "0.0.0"
+  cloud_run_stream_ingest_version = "0.0.0"
   service_account_member          = module.playground_datasets.landing_zone_default_sa_member
   service_account_email           = module.playground_datasets.landing_zone_default_sa_email
   builder_sa_email                = local.builder_sa_email
