@@ -23,13 +23,10 @@ module "dataform" {
 module "playground_datasets" {
   source = "./modules/dataset_warehousing"
 
-  domain_name = "msc_playground"
-  project_id  = var.project_id
-  location    = var.default_region
-  landing_zone_editor_members = [
-    module.gdpr_sa.gdpr_sa_member,
-    "group:investor-audit-group@oxwash.com"
-  ]
+  domain_name                  = "msc_playground"
+  project_id                   = var.project_id
+  location                     = var.default_region
+  landing_zone_editor_members  = []
   landing_zone_viewer_members  = []
   curated_layer_viewer_members = []
   builder_sa_email             = local.builder_sa_email

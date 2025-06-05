@@ -52,7 +52,7 @@ resource "google_pubsub_subscription" "pubsub_bq_dlq_sub" {
   }
 
   bigquery_config {
-    table            = "${google_bigquery_table.wormhole_dlq_table.project}:${google_bigquery_table.wormhole_dlq_table.dataset_id}.${google_bigquery_table.wormhole_dlq_table.table_id}"
+    table            = "${google_bigquery_table.pubsub_raw_dlq_table.project}:${google_bigquery_table.pubsub_raw_dlq_table.dataset_id}.${google_bigquery_table.pubsub_raw_dlq_table.table_id}"
     use_topic_schema = false
     write_metadata   = true
   }
