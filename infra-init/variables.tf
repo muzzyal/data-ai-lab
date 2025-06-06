@@ -2,7 +2,8 @@ locals {
   required_services = [
     "storage",
     "compute",
-    "iam"
+    "iam",
+    "pubsub"
   ]
 }
 
