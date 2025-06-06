@@ -37,6 +37,10 @@ resource "google_pubsub_subscription" "pubsub_bq_sub" {
     ]
   }
 
+  depends_on = [
+    google_pubsub_topic.pubsub_bq
+  ]
+
 }
 
 resource "google_pubsub_subscription" "pubsub_bq_dlq_sub" {
@@ -63,6 +67,10 @@ resource "google_pubsub_subscription" "pubsub_bq_dlq_sub" {
     ]
   }
 
+  depends_on = [
+    google_pubsub_topic.pubsub_bq_dlq
+  ]
+
 }
 
 resource "google_pubsub_topic_iam_member" "dlq_publisher" {
@@ -77,6 +85,10 @@ resource "google_pubsub_topic_iam_member" "dlq_publisher" {
     ]
   }
 
+  depends_on = [
+    google_pubsub_subscription.pubsub_bq_dlq_sub
+  ]
+
 }
 
 resource "google_pubsub_subscription_iam_member" "dlq_subscriber" {
@@ -89,6 +101,11 @@ resource "google_pubsub_subscription_iam_member" "dlq_subscriber" {
       google_pubsub_subscription.pubsub_bq_sub
     ]
   }
+
+  depends_on = [
+    google_pubsub_subscription.pubsub_bq_dlq_sub,
+    google_pubsub_subscription.pubsub_bq_sub
+  ]
 
 }
 
@@ -104,5 +121,9 @@ resource "google_pubsub_topic_iam_member" "topic_publisher" {
       google_pubsub_topic.pubsub_bq
     ]
   }
+
+  depends_on = [
+    google_pubsub_topic.pubsub_bq
+  ]
 
 }
