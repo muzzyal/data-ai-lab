@@ -73,7 +73,25 @@ resource "google_pubsub_subscription" "pubsub_bq_dlq_sub" {
 
 }
 
-resource "google_pubsub_topic_iam_member" "dlq_publisher" {
+resource "google_pubsub_topic_iam_member" "pubsub_bq_publisher" {
+  project = google_pubsub_topic.pubsub_bq.project
+  topic   = google_pubsub_topic.pubsub_bq.name
+  role    = "roles/pubsub.publisher"
+  member  = "serviceAccount:service-${var.project_no}@gcp-sa-pubsub.iam.gserviceaccount.com"
+
+  lifecycle {
+    replace_triggered_by = [
+      google_pubsub_topic.pubsub_bq
+    ]
+  }
+
+  depends_on = [
+    google_pubsub_topic.pubsub_bq
+  ]
+
+}
+
+resource "google_pubsub_topic_iam_member" "pubsub_bq_dlq_publisher" {
   project = google_pubsub_topic.pubsub_bq_dlq.project
   topic   = google_pubsub_topic.pubsub_bq_dlq.name
   role    = "roles/pubsub.publisher"
@@ -86,7 +104,7 @@ resource "google_pubsub_topic_iam_member" "dlq_publisher" {
   }
 
   depends_on = [
-    google_pubsub_subscription.pubsub_bq_dlq_sub
+    google_pubsub_topic.pubsub_bq_dlq
   ]
 
 }
