@@ -34,9 +34,9 @@ resource "google_project_iam_member" "dataform_admin" {
   member  = "serviceAccount:${google_service_account.build_admin.email}"
 }
 
-resource "google_project_iam_member" "service_account_user" {
+resource "google_project_iam_member" "service_account_admin" {
   project = var.project_id
-  role    = "roles/iam.serviceAccountUser"
+  role    = "roles/iam.serviceAccountAdmin"
   member  = "serviceAccount:${google_service_account.build_admin.email}"
 }
 
