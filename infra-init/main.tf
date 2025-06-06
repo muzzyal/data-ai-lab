@@ -40,9 +40,9 @@ resource "google_project_iam_member" "service_account_admin" {
   member  = "serviceAccount:${google_service_account.build_admin.email}"
 }
 
-resource "google_project_iam_member" "service_account_admin" {
+resource "google_project_iam_member" "pubsub_editor" {
   project = var.project_id
-  role    = "roles/pubsub.admin"
+  role    = "roles/pubsub.editor"
   member  = "serviceAccount:${google_service_account.build_admin.email}"
 }
 
