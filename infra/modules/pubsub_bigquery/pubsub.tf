@@ -38,7 +38,9 @@ resource "google_pubsub_subscription" "pubsub_bq_sub" {
   }
 
   depends_on = [
-    google_pubsub_topic.pubsub_bq
+    google_bigquery_table.pubsub_raw_table,
+    google_pubsub_topic.pubsub_bq,
+    google_bigquery_dataset_iam_member.pubsub_writer_dlq
   ]
 
 }
@@ -68,7 +70,9 @@ resource "google_pubsub_subscription" "pubsub_bq_dlq_sub" {
   }
 
   depends_on = [
-    google_pubsub_topic.pubsub_bq_dlq
+    google_bigquery_table.pubsub_raw_dlq_table,
+    google_pubsub_topic.pubsub_bq_dlq,
+    google_bigquery_dataset_iam_member.pubsub_writer_dlq
   ]
 
 }
@@ -144,4 +148,22 @@ resource "google_pubsub_topic_iam_member" "topic_publisher" {
     google_pubsub_topic.pubsub_bq
   ]
 
+}
+
+resource "google_bigquery_dataset_iam_member" "pubsub_writer" {
+  dataset_id = google_bigquery_table.pubsub_raw_table.dataset_id
+  role       = "roles/bigquery.dataEditor"
+  member     = "serviceAccount:service-${var.project_no}@gcp-sa-pubsub.iam.gserviceaccount.com"
+  depends_on = [
+    google_bigquery_table.pubsub_raw_table
+  ]
+}
+
+resource "google_bigquery_dataset_iam_member" "pubsub_writer_dlq" {
+  dataset_id = google_bigquery_table.pubsub_raw_dlq_table.dataset_id
+  role       = "roles/bigquery.dataEditor"
+  member     = "serviceAccount:service-${var.project_no}@gcp-sa-pubsub.iam.gserviceaccount.com"
+  depends_on = [
+    google_bigquery_table.pubsub_raw_dlq_table
+  ]
 }
