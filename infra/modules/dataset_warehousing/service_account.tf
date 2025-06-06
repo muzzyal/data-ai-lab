@@ -1,6 +1,6 @@
 resource "google_service_account" "zone_default_account" {
   project      = var.project_id
-  account_id   = "${var.domain_name}-default-account"
+  account_id   = "${replace(var.domain_name, "_", "-")}-default-account"
   display_name = "Default service account - ${var.domain_name}"
 }
 
