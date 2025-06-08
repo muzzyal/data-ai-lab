@@ -1,8 +1,15 @@
 pre-commit==3.7.0
 pytest==8.3.3
+pytest-cov==6.1.1
 black==24.10.0
 vertexai==1.71.1
 pandas==2.2.3
 numpy==2.2.5
 google-cloud-bigquery==3.31.0
 google-cloud-dataform==0.6.1
+Flask==3.1.1
+jsonschema==4.24.0
+google-cloud-pubsub==2.29.1
+Flask-SQLAlchemy==3.1.1
+psycopg2-binary==2.9.10
+email_validator==2.2.0
