@@ -10,6 +10,16 @@ variable "project_no" {
   type = string
 }
 
+variable "secret_id" {
+  description = "ID for the secret"
+  type        = string
+}
+
+variable "secret_members" {
+  description = "List of members to assign access to"
+  type        = list(string)
+}
+
 variable "cloud_run_batch_ingest_version" {
   type = string
 }

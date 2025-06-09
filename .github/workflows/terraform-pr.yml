@@ -47,5 +47,4 @@ jobs:
       - name: Terraform Plan
         run:  |
           cd infra
-          export TF_LOG=DEBUG
           terraform plan -no-color
