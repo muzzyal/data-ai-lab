@@ -1,10 +1,11 @@
 import logging
 from typing import Dict, Any, Tuple
 from jsonschema import validate, ValidationError
-from src.schemas.transaction_schema import TRANSACTION_SCHEMA
+from playground_stream_ingest.src.schemas.transaction_schema import TRANSACTION_SCHEMA
 import hmac
 import binascii
-from Flask import current_app as app
+import hashlib
+from flask import current_app as app
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +17,7 @@ class TransactionValidator:
         self.schema = TRANSACTION_SCHEMA
         logger.info("TransactionValidator initialized")
 
-    def verify_signature(signature, data, secret):
+    def verify_signature(self, signature, body, secret):
         """Verify HMAC signature for the transaction data.
 
         Args:
@@ -26,7 +27,7 @@ class TransactionValidator:
         Returns:
             bool: True if signature is valid, False otherwise"""
 
-        return hmac.new(binascii.a2b_hex(secret), data, "sha512").hexdigest() == signature
+        return hmac.new(binascii.a2b_hex(secret), body, hashlib.sha512).hexdigest() == signature
 
     def validate_transaction(self, data: Dict[str, Any]) -> Tuple[bool, str]:
         """
@@ -108,6 +109,8 @@ class TransactionValidator:
 
         if not valid_secret:
             return False, "Invalid signature"
+
+        logger.info(f"Signature validation successful for transaction: {data.get('transaction_id')}")
 
         # Then validate against schema
         schema_valid, schema_error = self.validate_transaction(data)

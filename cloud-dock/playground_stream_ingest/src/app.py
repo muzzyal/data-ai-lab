@@ -2,7 +2,7 @@ import os
 import logging
 from flask import Flask, jsonify
 from werkzeug.middleware.proxy_fix import ProxyFix
-from src.config.loader import get_secret_key
+from playground_stream_ingest.src.config.loader import get_secret_key
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -14,7 +14,12 @@ def create_app():
     app = Flask(__name__)
 
     # Configuration
-    app.config["SECRET_KEY"] = get_secret_key()
+    app.config["SECRET_KEY"], scc, err = get_secret_key()
+
+    if not scc:
+        logger.error(f"Failed to retrieve secret key: {err}")
+        raise ValueError("Failed to retrieve secret key from Secret Manager")
+
     app.config["DEBUG"] = True
     app.config["TESTING"] = False
 
@@ -22,7 +27,7 @@ def create_app():
     app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
     # Register blueprints
-    from src.routes.transaction_routes import transaction_bp
+    from playground_stream_ingest.src.routes.transaction_routes import transaction_bp
 
     app.register_blueprint(transaction_bp)
 

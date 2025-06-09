@@ -18,27 +18,15 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry
-RUN pip install poetry==1.7.1
+RUN pip install poetry
 
-# Configure Poetry: Don't create virtual environment, install dependencies globally
-ENV POETRY_NO_INTERACTION=1 \
-    POETRY_VENV_IN_PROJECT=1 \
-    POETRY_CACHE_DIR=/tmp/poetry_cache
-
-# Install Python dependencies
-COPY pyproject.toml poetry.lock* ./
-RUN poetry install --only=main && rm -rf $POETRY_CACHE_DIR
+RUN poetry config virtualenvs.create false
 
 # Copy application code
-COPY . .
+COPY /playground_stream_ingest ./playground_stream_ingest
 
-# Create non-root user
-RUN useradd --create-home --shell /bin/bash app \
-    && chown -R app:app /app
-USER app
-
-# Expose port
-ENV PORT=5000
+# Install Python dependencies
+RUN poetry install --directory ./playground_stream_ingest
 
 # Run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "--workers", "2", "--timeout", "120", "--max-requests", "1000", "--max-requests-jitter", "100", "--graceful-timeout", "30", "--access-logfile", "-", "main:app"]
+CMD gunicorn --bind :$PORT --workers 2 --timeout 120 --max-requests 1000 --max-requests-jitter 100 --graceful-timeout 30 --access-logfile - playground_stream_ingest.src.main:app
