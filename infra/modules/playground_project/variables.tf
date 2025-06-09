@@ -10,6 +10,10 @@ variable "project_no" {
   type = string
 }
 
+variable "secret_id" {
+  type = string
+}
+
 variable "cloud_run_batch_ingest_version" {
   type = string
 }

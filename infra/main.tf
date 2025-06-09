@@ -17,8 +17,6 @@ module "dataform" {
   ]
 }
 
-
-
 # playground datasets
 module "playground_datasets" {
   source = "./modules/dataset_warehousing"
@@ -29,6 +27,7 @@ module "playground_datasets" {
   landing_zone_editor_members  = []
   landing_zone_viewer_members  = []
   curated_layer_viewer_members = []
+  secret_id                    = "playground_project_stream_secret"
   builder_sa_email             = local.builder_sa_email
   dataform_sa_member           = local.default_dataform_sa_member
   delete_contents_on_destroy   = true
