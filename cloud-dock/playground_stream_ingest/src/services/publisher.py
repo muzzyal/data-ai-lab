@@ -2,7 +2,7 @@ import logging
 import json
 import os
 from typing import Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 from google.cloud import pubsub_v1
 from google.api_core import retry
@@ -13,9 +13,9 @@ logger = logging.getLogger(__name__)
 class PubSubPublisher:
     """Service for publishing messages to Google Pub/Sub."""
 
-    def __init__(self, project_id: Optional[str] = None, topic_name: Optional[str] = None):
-        self.project_id = project_id or os.environ.get("GCP_PROJECT_ID", "transaction-ingestion-project")
-        self.topic_name = topic_name or os.environ.get("PUBSUB_TOPIC", "transaction-topic")
+    def __init__(self, project_id: str, topic_name: str):
+        self.project_id = project_id
+        self.topic_name = topic_name
         self.published_messages = []  # Store for testing/verification
 
         # Initialize Pub/Sub client only if running in production
@@ -45,7 +45,7 @@ class PubSubPublisher:
         """
         try:
             message_id = str(uuid.uuid4())
-            timestamp = datetime.utcnow().isoformat() + "Z"
+            timestamp = datetime.now(timezone.utc).isoformat()
 
             # Create message envelope
             message = {

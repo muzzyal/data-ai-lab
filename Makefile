@@ -23,3 +23,13 @@ migrate-state-infra-init:
 		-backend-config="bucket=$(INFRA_INIT_TF_BUCKET_NAME)" \
 		-backend-config="prefix=infra-init/state" \
 		-migrate-state
+
+create-docker-image:
+	docker build -f ./cloud-dock/playground_stream_ingest/Dockerfile -t ${APP} ./cloud-dock && \
+	docker run \
+		-e GOOGLE_CLOUD_PROJECT=muz-designed-msc-data-ai-2025 \
+		-e PUBSUB_TOPIC_NAME=playground_project_topic \
+		-e DLQ_TOPIC_NAME=playground_project_dlq \
+		-e SECRET_ID=playground_project_stream_secret \
+		-p 5000:5000 \
+		${APP}

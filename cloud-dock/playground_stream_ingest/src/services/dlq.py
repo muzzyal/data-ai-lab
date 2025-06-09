@@ -2,7 +2,7 @@ import logging
 import json
 import os
 from typing import Dict, Any, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 from google.cloud import pubsub_v1
 
@@ -12,9 +12,9 @@ logger = logging.getLogger(__name__)
 class DeadLetterQueue:
     """Service for handling messages that failed processing."""
 
-    def __init__(self, project_id: Optional[str] = None, dlq_topic_name: Optional[str] = None):
-        self.project_id = project_id or os.environ.get("GCP_PROJECT_ID", "transaction-ingestion-project")
-        self.dlq_topic_name = dlq_topic_name or os.environ.get("DLQ_TOPIC", "transaction-dlq-topic")
+    def __init__(self, project_id: str, dlq_topic_name: str):
+        self.project_id = project_id
+        self.dlq_topic_name = dlq_topic_name
         self.dlq_messages = []  # Store for testing/verification
 
         # Initialize Pub/Sub client only if running in production
@@ -49,7 +49,7 @@ class DeadLetterQueue:
         """
         try:
             dlq_message_id = str(uuid.uuid4())
-            timestamp = datetime.utcnow().isoformat() + "Z"
+            timestamp = datetime.now(timezone.utc).isoformat()
 
             # Create DLQ message envelope with error metadata
             dlq_message = {

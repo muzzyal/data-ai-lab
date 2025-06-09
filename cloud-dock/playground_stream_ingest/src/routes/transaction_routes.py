@@ -3,17 +3,21 @@ from flask import Blueprint, request, jsonify, render_template
 from src.services.validator import TransactionValidator
 from src.services.publisher import PubSubPublisher, PublishError
 from src.services.dlq import DeadLetterQueue
+from src.config.loader import retrieve_environment_variables
 import json
+import os
 
 logger = logging.getLogger(__name__)
 
 # Create blueprint for transaction routes
 transaction_bp = Blueprint("transactions", __name__)
 
+project_id, topic_name, dlq_topic_name, secret_id = retrieve_environment_variables()
+
 # Initialize services
 validator = TransactionValidator()
-publisher = PubSubPublisher()
-dlq = DeadLetterQueue()
+publisher = PubSubPublisher(project_id, topic_name)
+dlq = DeadLetterQueue(project_id, dlq_topic_name)
 
 
 @transaction_bp.route("/api/transactions", methods=["POST"])
@@ -30,6 +34,8 @@ def ingest_transaction():
         # Get JSON data
         try:
             transaction_data = request.get_json()
+            body = request.data
+            signature = request.headers.get("X-Signature", "")
         except Exception as e:
             return jsonify({"status": "error", "message": "Invalid JSON format"}), 400
 
@@ -41,7 +47,7 @@ def ingest_transaction():
         )
 
         # Validate the transaction data
-        is_valid, validation_error = validator.full_validation(transaction_data)
+        is_valid, validation_error = validator.full_validation(body, signature, transaction_data)
 
         if not is_valid:
             # Send to DLQ for validation failures
@@ -146,6 +152,8 @@ def validate_transaction():
 
         try:
             transaction_data = request.get_json()
+            body = request.data
+            signature = request.headers.get("X-Signature", "")
         except Exception as e:
             return jsonify({"status": "error", "message": "Invalid JSON format"}), 400
 
@@ -153,7 +161,7 @@ def validate_transaction():
             return jsonify({"status": "error", "message": "Request body must contain valid JSON"}), 400
 
         # Validate the transaction data
-        is_valid, validation_error = validator.full_validation(transaction_data)
+        is_valid, validation_error = validator.full_validation(body, signature, transaction_data)
 
         if is_valid:
             return (

@@ -2,6 +2,9 @@ import logging
 from typing import Dict, Any, Tuple
 from jsonschema import validate, ValidationError
 from src.schemas.transaction_schema import TRANSACTION_SCHEMA
+import hmac
+import binascii
+from Flask import current_app as app
 
 logger = logging.getLogger(__name__)
 
@@ -12,6 +15,18 @@ class TransactionValidator:
     def __init__(self):
         self.schema = TRANSACTION_SCHEMA
         logger.info("TransactionValidator initialized")
+
+    def verify_signature(signature, data, secret):
+        """Verify HMAC signature for the transaction data.
+
+        Args:
+            signature: HMAC signature to verify
+            body: Raw transaction data
+            secret: Secret key used for HMAC
+        Returns:
+            bool: True if signature is valid, False otherwise"""
+
+        return hmac.new(binascii.a2b_hex(secret), data, "sha512").hexdigest() == signature
 
     def validate_transaction(self, data: Dict[str, Any]) -> Tuple[bool, str]:
         """
@@ -73,7 +88,7 @@ class TransactionValidator:
             logger.error(error_msg)
             return False, error_msg
 
-    def full_validation(self, data: Dict[str, Any]) -> Tuple[bool, str]:
+    def full_validation(self, body: bytes, signature: str, data: Dict[str, Any]) -> Tuple[bool, str]:
         """
         Perform complete validation including schema and business rules.
 
@@ -83,12 +98,23 @@ class TransactionValidator:
         Returns:
             Tuple of (is_valid, error_message)
         """
-        # First validate against schema
+        # First validate signature
+        secret_key = app.config.get("SECRET_KEY", "")
+
+        if not secret_key:
+            return False, "Secret Key not configured"
+
+        valid_secret = self.verify_signature(signature, body, secret_key)
+
+        if not valid_secret:
+            return False, "Invalid signature"
+
+        # Then validate against schema
         schema_valid, schema_error = self.validate_transaction(data)
         if not schema_valid:
             return False, schema_error
 
-        # Then validate business rules
+        # Finally validate business rules
         business_valid, business_error = self.validate_required_fields(data)
         if not business_valid:
             return False, business_error

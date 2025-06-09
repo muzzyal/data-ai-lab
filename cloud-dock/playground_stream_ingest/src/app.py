@@ -2,6 +2,7 @@ import os
 import logging
 from flask import Flask, jsonify
 from werkzeug.middleware.proxy_fix import ProxyFix
+from src.config.loader import get_secret_key
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -13,7 +14,7 @@ def create_app():
     app = Flask(__name__)
 
     # Configuration
-    app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key")
+    app.config["SECRET_KEY"] = get_secret_key()
     app.config["DEBUG"] = True
     app.config["TESTING"] = False
 
