@@ -11,7 +11,13 @@ variable "project_no" {
 }
 
 variable "secret_id" {
-  type = string
+  description = "ID for the secret"
+  type        = string
+}
+
+variable "secret_members" {
+  description = "List of members to assign access to"
+  type        = list(string)
 }
 
 variable "cloud_run_batch_ingest_version" {
