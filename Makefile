@@ -38,3 +38,6 @@ run-docker-image:
 		-p 8080:8080 \
 		-v ~/.config/gcloud:/home/.config/gcloud \
 		${APP}
+
+test-coverage:
+	python3 -m pytest --cov=src --cov-report=xml --cov-report=html --cov-report=term

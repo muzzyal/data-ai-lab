@@ -99,7 +99,6 @@ class TransactionValidator:
         Returns:
             Tuple of (is_valid, error_message)
         """
-        # First validate signature
         secret_key = app.config.get("SECRET_KEY", "")
 
         if not secret_key:

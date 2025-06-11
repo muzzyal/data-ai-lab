@@ -1,16 +1,46 @@
 import pytest
 import sys
 import os
+from unittest.mock import patch
 
-# Add the parent directory to the Python path so we can import our modules
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+secret_id = "test-secret-id"
 
-from src.app import create_app
+
+def mock_fetch_secret_success():
+    secret_key = secret_id.encode("utf-8")
+    return secret_key, True, ""
+
+
+@pytest.fixture(autouse=True, scope="session")
+def mock_secret_retrieval():
+    with patch("playground_stream_ingest.src.config_loader.loader.get_secret_key", mock_fetch_secret_success):
+        yield
+
+
+@pytest.fixture(autouse=True, scope="session")
+def mock_env_retrieval():
+    os.environ["GOOGLE_CLOUD_PROJECT"] = "test-project"
+    os.environ["PUBSUB_TOPIC_NAME"] = "test-topic"
+    os.environ["DLQ_TOPIC_NAME"] = "test-dlq-topic"
+    os.environ["SECRET_ID"] = secret_id
+    yield
 
 
 @pytest.fixture
-def app():
+def app(mock_env_retrieval, mock_secret_retrieval):
+    from playground_stream_ingest.src.app import create_app
+
+    app = create_app()
+    app.config["TESTING"] = True
+    app.config["WTF_CSRF_ENABLED"] = False
+    return app
+
+
+@pytest.fixture
+def app(mock_env_retrieval, mock_secret_retrieval):
     """Create and configure a test instance of the Flask app."""
+    from playground_stream_ingest.src.app import create_app
+
     app = create_app()
     app.config["TESTING"] = True
     app.config["WTF_CSRF_ENABLED"] = False

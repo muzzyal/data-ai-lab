@@ -14,7 +14,7 @@
             ],
             "settings": {
                 "python.testing.pytestArgs": [
-                    "/workspaces"
+                    "cloud-dock"
                 ],
                 "python.testing.unittestEnabled": false,
                 "python.testing.pytestEnabled": true,

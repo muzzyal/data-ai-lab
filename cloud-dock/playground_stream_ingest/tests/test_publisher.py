@@ -1,5 +1,5 @@
 import pytest
-from src.services.publisher import PubSubPublisher, PublishError
+from playground_stream_ingest.src.services.publisher import PubSubPublisher, PublishError
 import time
 
 

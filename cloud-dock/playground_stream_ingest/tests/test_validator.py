@@ -1,5 +1,40 @@
 import pytest
-from src.services.validator import TransactionValidator
+from unittest.mock import patch
+import hmac
+import binascii
+import hashlib
+import os
+import json
+from flask import Flask
+from playground_stream_ingest.src.services.validator import TransactionValidator
+
+
+def retrieve_secret_key() -> str:
+    """Retrieve secret key in hex format for HMAC generation."""
+    secret_id = os.environ["SECRET_ID"]
+    return secret_id.encode("utf-8").hex()
+
+
+def create_signature_and_body(data: dict):
+    """Generate HMAC signature for testing from a dict."""
+
+    secret_key = retrieve_secret_key()
+    # Serialize dict to JSON bytes in a consistent way
+    body = json.dumps(data, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+    # Generate HMAC signature
+    signature = hmac.new(binascii.a2b_hex(secret_key), body, hashlib.sha512).hexdigest()
+
+    return signature, body
+
+
+def return_flask_app_context():
+    secret_key = retrieve_secret_key()
+
+    app = Flask(__name__)
+    app.config["SECRET_KEY"] = secret_key
+
+    return app.app_context()
 
 
 class TestTransactionValidator:
@@ -28,13 +63,20 @@ class TestTransactionValidator:
 
     def test_valid_transaction_passes_full_validation(self, sample_transaction):
         """Test that a valid transaction passes complete validation."""
-        is_valid, error_message = self.validator.full_validation(sample_transaction)
+        signature, body = create_signature_and_body(sample_transaction)
+
+        with return_flask_app_context():
+            is_valid, error_message = self.validator.full_validation(body, signature, sample_transaction)
+
         assert is_valid is True
         assert error_message == ""
 
     def test_minimal_transaction_passes_validation(self, minimal_transaction):
         """Test that a minimal valid transaction passes validation."""
-        is_valid, error_message = self.validator.full_validation(minimal_transaction)
+        signature, body = create_signature_and_body(minimal_transaction)
+
+        with return_flask_app_context():
+            is_valid, error_message = self.validator.full_validation(body, signature, minimal_transaction)
         assert is_valid is True
         assert error_message == ""
 
@@ -211,7 +253,10 @@ class TestTransactionValidator:
             "payment_method": {"type": "credit_card"},
         }
 
-        is_valid, error_message = self.validator.full_validation(transaction_with_large_amount)
+        signature, body = create_signature_and_body(transaction_with_large_amount)
+
+        with return_flask_app_context():
+            is_valid, error_message = self.validator.full_validation(body, signature, transaction_with_large_amount)
         assert is_valid is True
 
     def test_edge_case_amount_too_large(self):
@@ -240,6 +285,8 @@ class TestTransactionValidator:
             "timestamp": "2024-01-15T10:30:00Z",
             "payment_method": {"type": "credit_card"},
         }
+        signature, body = create_signature_and_body(transaction_with_minimum_amount)
 
-        is_valid, error_message = self.validator.full_validation(transaction_with_minimum_amount)
+        with return_flask_app_context():
+            is_valid, error_message = self.validator.full_validation(body, signature, transaction_with_minimum_amount)
         assert is_valid is True

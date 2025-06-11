@@ -1,5 +1,5 @@
 import pytest
-from src.services.dlq import DeadLetterQueue, DLQError
+from playground_stream_ingest.src.services.dlq import DeadLetterQueue, DLQError
 import time
 
 

@@ -165,10 +165,10 @@ class TestTransactionRoutes:
         assert data["status"] == "success"
         assert "message_id" in data
 
-    @patch("src.routes.transaction_routes.publisher.publish_with_retry")
+    @patch("playground_stream_ingest.src.routes.transaction_routes.publisher.publish_with_retry")
     def test_ingest_transaction_publish_failure(self, mock_publish, client, sample_transaction):
         """Test transaction ingestion when publishing fails."""
-        from src.services.publisher import PublishError
+        from playground_stream_ingest.src.services.publisher import PublishError
 
         mock_publish.side_effect = PublishError("Simulated publish failure")
 
