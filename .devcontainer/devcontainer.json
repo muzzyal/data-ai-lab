@@ -10,7 +10,8 @@
                 "ms-python.black-formatter",
                 "njpower.autodocstring",
                 "streetsidesoftware.code-spell-checker",
-                "hashicorp.terraform"
+                "hashicorp.terraform",
+                "njpwerner.autodocstring"
             ],
             "settings": {
                 "python.testing.pytestArgs": [

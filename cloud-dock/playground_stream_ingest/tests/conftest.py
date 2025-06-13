@@ -1,9 +1,39 @@
 import pytest
 import sys
+import hmac
+import binascii
+import hashlib
 import os
+import json
 from unittest.mock import patch
 
 secret_id = "test-secret-id"
+
+
+def retrieve_secret_key() -> str:
+    """Retrieve secret key in hex format for HMAC generation."""
+    secret_id = os.environ["SECRET_ID"]
+    return secret_id.encode("utf-8").hex()
+
+
+def create_signature_and_body(data: dict) -> tuple:
+    """Generate HMAC signature for testing from a dict.
+
+    Args:
+        data (dict): Data to be signed.
+
+    Returns:
+        tuple(str, bytes): Signature in hex format and serialized JSON body as bytes.
+    """
+
+    secret_key = retrieve_secret_key()
+    # Serialize dict to JSON bytes in a consistent way
+    body = json.dumps(data, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+    # Generate HMAC signature
+    signature = hmac.new(binascii.a2b_hex(secret_key), body, hashlib.sha512).hexdigest()
+
+    return signature, body
 
 
 def mock_fetch_secret_success():
@@ -50,6 +80,9 @@ def app(mock_env_retrieval, mock_secret_retrieval):
 @pytest.fixture
 def client(app):
     """Create a test client for the Flask app."""
+    secret_key = retrieve_secret_key()
+
+    app.config["SECRET_KEY"] = secret_key
     return app.test_client()
 
 

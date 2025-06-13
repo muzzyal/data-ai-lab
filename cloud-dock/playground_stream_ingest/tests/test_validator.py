@@ -6,26 +6,8 @@ import hashlib
 import os
 import json
 from flask import Flask
+from playground_stream_ingest.tests.conftest import create_signature_and_body, retrieve_secret_key
 from playground_stream_ingest.src.services.validator import TransactionValidator
-
-
-def retrieve_secret_key() -> str:
-    """Retrieve secret key in hex format for HMAC generation."""
-    secret_id = os.environ["SECRET_ID"]
-    return secret_id.encode("utf-8").hex()
-
-
-def create_signature_and_body(data: dict):
-    """Generate HMAC signature for testing from a dict."""
-
-    secret_key = retrieve_secret_key()
-    # Serialize dict to JSON bytes in a consistent way
-    body = json.dumps(data, sort_keys=True, separators=(",", ":")).encode("utf-8")
-
-    # Generate HMAC signature
-    signature = hmac.new(binascii.a2b_hex(secret_key), body, hashlib.sha512).hexdigest()
-
-    return signature, body
 
 
 def return_flask_app_context():

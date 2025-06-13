@@ -1,6 +1,7 @@
 import pytest
 from playground_stream_ingest.src.services.dlq import DeadLetterQueue, DLQError
 import time
+import os
 
 
 class TestDeadLetterQueue:
@@ -8,15 +9,18 @@ class TestDeadLetterQueue:
 
     def setup_method(self):
         """Set up test fixtures before each test method."""
-        self.dlq = DeadLetterQueue()
+        project_id = os.environ["GOOGLE_CLOUD_PROJECT"]
+        dlq_topic_name = os.environ["DLQ_TOPIC_NAME"]
+
+        self.dlq = DeadLetterQueue(project_id, dlq_topic_name)
         # Clear any previous messages
         self.dlq.clear_dlq_messages()
 
     def test_dlq_initialization(self):
         """Test that the DLQ initializes correctly."""
         assert self.dlq is not None
-        assert self.dlq.project_id == "transaction-ingestion-project"
-        assert self.dlq.dlq_topic_name == "transaction-dlq-topic"
+        assert self.dlq.project_id == os.environ["GOOGLE_CLOUD_PROJECT"]
+        assert self.dlq.dlq_topic_name == os.environ["DLQ_TOPIC_NAME"]
         assert len(self.dlq.dlq_messages) == 0
 
     def test_dlq_custom_initialization(self):
