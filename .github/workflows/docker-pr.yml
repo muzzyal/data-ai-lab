@@ -33,6 +33,7 @@ jobs:
         run: |
           trivy image --exit-code 1 --format table --ignore-unfixed test
 
+      - uses: actions/checkout@v4
       - name: Decode GCP service account key and set env
         run: |
           echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > "${{ github.workspace }}/gcp-key.json"
