@@ -7,6 +7,9 @@ import os
 import json
 from unittest.mock import patch
 
+project_id = "test-project"
+topic_name = "test-topic"
+dlq_topic_name = "test-dlq-topic"
 secret_id = "test-secret-id"
 
 
@@ -14,6 +17,11 @@ def retrieve_secret_key() -> str:
     """Retrieve secret key in hex format for HMAC generation."""
     secret_id = os.environ["SECRET_ID"]
     return secret_id.encode("utf-8").hex()
+
+
+def failed_retrieve_secret_key():
+    """Simulate a failed secret key retrieval for testing purposes."""
+    return "", False, f"Failed to retrieve secret {secret_id} for project {project_id}."
 
 
 def create_signature_and_body(data: dict) -> tuple:
@@ -49,9 +57,9 @@ def mock_secret_retrieval():
 
 @pytest.fixture(autouse=True, scope="session")
 def mock_env_retrieval():
-    os.environ["GOOGLE_CLOUD_PROJECT"] = "test-project"
-    os.environ["PUBSUB_TOPIC_NAME"] = "test-topic"
-    os.environ["DLQ_TOPIC_NAME"] = "test-dlq-topic"
+    os.environ["GOOGLE_CLOUD_PROJECT"] = project_id
+    os.environ["PUBSUB_TOPIC_NAME"] = topic_name
+    os.environ["DLQ_TOPIC_NAME"] = dlq_topic_name
     os.environ["SECRET_ID"] = secret_id
     yield
 

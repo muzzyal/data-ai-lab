@@ -1,7 +1,52 @@
 import pytest
+from unittest.mock import patch, MagicMock
 from playground_stream_ingest.src.services.publisher import PubSubPublisher, PublishError
 import time
 import os
+
+
+class TestPubSubPublisherRealPubSub:
+    @pytest.fixture(autouse=True)
+    def setup_env(self, monkeypatch):
+        # Always enable real pubsub for these tests
+        monkeypatch.setenv("USE_REAL_PUBSUB", "true")
+
+    def test_publisher_init_with_real_pubsub(self):
+        # Patch the PublisherClient
+        with patch("playground_stream_ingest.src.services.dlq.pubsub_v1.PublisherClient") as mock_client:
+            mock_instance = MagicMock()
+            mock_client.return_value = mock_instance
+            mock_instance.topic_path.return_value = "projects/test-project/topics/test-topic"
+
+            publisher = PubSubPublisher("test-project", "test-topic")
+
+            assert publisher.use_real_pubsub is True
+            assert publisher.publisher == mock_instance
+            assert publisher.topic_path == "projects/test-project/topics/test-topic"
+
+    def test_publish_to_real_pubsub(self, sample_transaction):
+        # Patch the PublisherClient and its publish method
+        with patch("playground_stream_ingest.src.services.publisher.pubsub_v1.PublisherClient") as mock_client:
+            mock_instance = MagicMock()
+            mock_client.return_value = mock_instance
+            mock_instance.topic_path.return_value = "projects/test-project/topics/test-topic"
+            # Mock the publish method to return a future with a result
+            mock_future = MagicMock()
+            mock_future.result.return_value = "pubsub-message-id-456"
+            mock_instance.publish.return_value = mock_future
+
+            publisher = PubSubPublisher("test-project", "test-topic")
+            publisher.use_real_pubsub = True  # Ensure the flag is set
+
+            # Call publish_message, which should hit the real Pub/Sub branch
+            pubsub_message_id = publisher.publish_message(sample_transaction, {"source": "test-service"})
+
+            # Assertions to ensure the branch was executed
+            assert mock_instance.publish.called
+            assert pubsub_message_id == "pubsub-message-id-456"
+            # Check that the published_messages list contains the pubsub_message_id
+            published = publisher.get_published_messages()
+            assert published[0]["pubsub_message_id"] == "pubsub-message-id-456"
 
 
 class TestPubSubPublisher:
@@ -47,6 +92,13 @@ class TestPubSubPublisher:
         assert "publish_time" in stored_message
         assert "topic" in stored_message
 
+    def test_publish_message_network_error(self, monkeypatch, sample_transaction):
+        """Test successful message publishing."""
+        monkeypatch.setenv("SIMULATE_NETWORK_ERROR", "true")
+        with pytest.raises(PublishError, match="Failed to publish message: Simulated network error during publishing"):
+
+            message_id = self.publisher.publish_message(sample_transaction)
+
     def test_publish_message_with_attributes(self, sample_transaction):
         """Test publishing message with custom attributes."""
         attributes = {"source": "test-service", "transaction_type": "purchase"}
@@ -88,6 +140,35 @@ class TestPubSubPublisher:
         assert message_id is not None
         published_messages = self.publisher.get_published_messages()
         assert len(published_messages) == 1
+
+    def test_publish_with_retry_success_on_retry(self, sample_transaction):
+        """Should fail once, then succeed on retry."""
+        mock_publish = MagicMock(side_effect=[Exception("fail"), "msgid-2"])
+        with patch.object(self.publisher, "publish_message", mock_publish):
+            with patch("time.sleep") as mock_sleep:  # avoid real sleep
+                message_id = self.publisher.publish_with_retry(sample_transaction, max_retries=2)
+                assert message_id == "msgid-2"
+                assert mock_publish.call_count == 2
+                mock_sleep.assert_called_once()  # sleep called for backoff
+
+    def test_publish_with_retry_all_fail(self, sample_transaction):
+        """Should raise PublishError after all retries fail."""
+        mock_publish = MagicMock(side_effect=Exception("fail"))
+        with patch.object(self.publisher, "publish_message", mock_publish):
+            with patch("time.sleep"):
+                with pytest.raises(PublishError, match="Failed to publish after 3 attempts. Last error:"):
+                    self.publisher.publish_with_retry(sample_transaction, max_retries=2)
+
+    def test_publish_with_retry_logs_on_retry(self, sample_transaction, caplog):
+        """Should log warning and error messages on retries."""
+        mock_publish = MagicMock(side_effect=[Exception("fail1"), Exception("fail2"), "msgid-3"])
+        with patch.object(self.publisher, "publish_message", mock_publish):
+            with patch("time.sleep"):
+                with caplog.at_level("WARNING"):
+                    message_id = self.publisher.publish_with_retry(sample_transaction, max_retries=3)
+                    assert "Publish attempt 1 failed" in caplog.text
+                    assert "Publish attempt 2 failed" in caplog.text
+                    assert message_id == "msgid-3"
 
     def test_publish_with_retry_custom_attributes(self, sample_transaction):
         """Test retry publishing with custom attributes."""

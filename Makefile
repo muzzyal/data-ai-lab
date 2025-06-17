@@ -40,4 +40,4 @@ run-docker-image:
 		${APP}
 
 test-coverage:
-	python3 -m pytest --cov={APP}.src --cov-report=xml --cov-report=html --cov-report=term
+	python3 -m pytest --cov=playground_stream_ingest.src --cov-report=xml --cov-report=html --cov-report=term --cov-branch

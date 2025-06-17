@@ -1,0 +1,59 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'cloud-dock/**'
+      - 'infra/**'
+
+jobs:
+  detect_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      services_matrix: ${{ steps.get-service-dirs.outputs.matrix }}
+      needs_terraform: ${{ steps.check-terraform.outputs.required }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Detect service changes
+      - name: Get changed services
+        id: get-service-dirs
+        run: |
+          DIRS=$(git diff --name-only HEAD^ HEAD | grep '^cloud-dock/' | cut -d'/' -f2 | sort | uniq)
+          echo "matrix={\"include\":[$(echo "$DIRS" | sed 's/.*/{"subdir":"&"}/' | paste -sd,)]}" >> $GITHUB_OUTPUT
+
+      # Check for Terraform changes
+      - name: Check Terraform changes
+        id: check-terraform
+        run: |
+          CHANGED=$(git diff --name-only HEAD^ HEAD | grep '^infra/')
+          echo "required=$([ -n "$CHANGED" ] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
+
+  cloudrun:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.services_matrix != 'null'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.detect_changes.outputs.services_matrix) }}
+    steps:
+      - name: Unit Tests
+        uses: ./.github/workflows/python-pr.yml
+        with:
+          microservice: ${{ matrix.subdir }}
+
+      - name: Container Tests
+        uses: ./.github/workflows/docker-pr.yml
+        with:
+          microservice: ${{ matrix.subdir }}
+
+  terraform:
+    needs: [detect_changes, cloudrun]
+    runs-on: ubuntu-latest
+    if: needs.detect_changes.outputs.needs_terraform == 'true'
+    steps:
+      - name: Terraform PR
+        uses: ./.github/workflows/terraform-pr

@@ -1,7 +1,49 @@
 import pytest
+from unittest.mock import patch, MagicMock
 from playground_stream_ingest.src.services.dlq import DeadLetterQueue, DLQError
 import time
 import os
+
+
+class TestDeadLetterQueueRealPubSub:
+    @pytest.fixture(autouse=True)
+    def setup_env(self, monkeypatch):
+        # Always enable real pubsub for these tests
+        monkeypatch.setenv("USE_REAL_PUBSUB", "true")
+
+    def test_dlq_init_with_real_pubsub(self):
+        # Patch the PublisherClient
+        with patch("playground_stream_ingest.src.services.dlq.pubsub_v1.PublisherClient") as mock_client:
+            mock_instance = MagicMock()
+            mock_client.return_value = mock_instance
+            mock_instance.topic_path.return_value = "projects/test-project/topics/test-dlq-topic"
+
+            dlq = DeadLetterQueue("test-project", "test-dlq-topic")
+
+            assert dlq.use_real_pubsub is True
+            assert dlq.publisher == mock_instance
+            assert dlq.dlq_topic_path == "projects/test-project/topics/test-dlq-topic"
+
+    def test_send_to_dlq_with_real_pubsub(self, sample_transaction):
+        # Patch the PublisherClient and its publish method
+        with patch("playground_stream_ingest.src.services.dlq.pubsub_v1.PublisherClient") as mock_client:
+            mock_instance = MagicMock()
+            mock_client.return_value = mock_instance
+            mock_instance.topic_path.return_value = "projects/test-project/topics/test-dlq-topic"
+            # Mock the publish method to return a future with a result
+            mock_future = MagicMock()
+            mock_future.result.return_value = "pubsub-message-id-123"
+            mock_instance.publish.return_value = mock_future
+
+            dlq = DeadLetterQueue("test-project", "test-dlq-topic")
+            dlq.use_real_pubsub = True
+
+            dlq_message_id = dlq.send_to_dlq(sample_transaction, "Test error for real pubsub")
+
+            # Check that publish was called
+            assert mock_instance.publish.called
+            # Check that the returned message ID is a string
+            assert isinstance(dlq_message_id, str)
 
 
 class TestDeadLetterQueue:

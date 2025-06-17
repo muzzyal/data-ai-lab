@@ -39,6 +39,18 @@ class TestTransactionRoutes:
         assert "message_id" in data
         assert data["transaction_id"] == sample_transaction["transaction_id"]
 
+    def test_ingest_transaction_no_transaction_data(self, client, sample_transaction):
+        """Test successful transaction ingestion."""
+        signature, body = create_signature_and_body({})
+        response = client.post(
+            "/api/transactions", data=body, content_type="application/json", headers={"X-Signature": signature}
+        )
+
+        assert response.status_code == 400
+        data = json.loads(response.data)
+        assert data["status"] == "error"
+        assert "Request body must contain valid JSON" in data["message"]
+
     def test_ingest_transaction_invalid_content_type(self, client, sample_transaction):
         """Test transaction ingestion with invalid content type."""
         response = client.post(
@@ -91,24 +103,56 @@ class TestTransactionRoutes:
         assert "validation_error" in data
         assert "dlq_message_id" in data
 
+    def test_ingest_transaction_unexpected_error(self, client, sample_transaction):
+        # Patch validator.full_validation to raise an unexpected exception
+        with patch(
+            "playground_stream_ingest.src.routes.transaction_routes.validator.full_validation",
+            side_effect=Exception("Simulated unexpected error"),
+        ):
+            signature, body = create_signature_and_body(sample_transaction)
+            response = client.post(
+                "/api/transactions", data=body, content_type="application/json", headers={"X-Signature": signature}
+            )
+            assert response.status_code == 500
+            assert b"Unexpected error occurred" in response.data
+            assert b"Simulated unexpected error" in response.data
+
+    def test_ingest_transaction_dlq_fails_in_error_handler(self, client, sample_transaction):
+        """Covers the except Exception: return jsonify(..., 500) when DLQ fails in error handler."""
+        # Patch validator.full_validation to raise an unexpected error
+        with patch(
+            "playground_stream_ingest.src.routes.transaction_routes.validator.full_validation",
+            side_effect=Exception("Simulated unexpected error"),
+        ), patch(
+            "playground_stream_ingest.src.routes.transaction_routes.dlq.send_to_dlq",
+            side_effect=Exception("DLQ totally failed"),
+        ):
+            signature, body = create_signature_and_body(sample_transaction)
+            response = client.post(
+                "/api/transactions", data=body, content_type="application/json", headers={"X-Signature": signature}
+            )
+            assert response.status_code == 500
+            assert b"Critical system error" in response.data
+            assert b"Simulated unexpected error" in response.data
+
     def test_validate_transaction_success(self, client, sample_transaction):
         """Test successful transaction validation."""
         signature, body = create_signature_and_body(sample_transaction)
         response = client.post(
-            "/api/transactions", data=body, content_type="application/json", headers={"X-Signature": signature}
+            "/api/transactions/validate", data=body, content_type="application/json", headers={"X-Signature": signature}
         )
 
         assert response.status_code == 200
         data = json.loads(response.data)
         assert data["status"] == "success"
-        assert "Transaction ingested successfully" == data["message"]
+        assert "Transaction data is valid" == data["message"]
         assert data["transaction_id"] == sample_transaction["transaction_id"]
 
     def test_validate_transaction_failure(self, client, invalid_transaction):
         """Test transaction validation failure."""
         signature, body = create_signature_and_body(invalid_transaction)
         response = client.post(
-            "/api/transactions", data=body, content_type="application/json", headers={"X-Signature": signature}
+            "/api/transactions/validate", data=body, content_type="application/json", headers={"X-Signature": signature}
         )
 
         assert response.status_code == 400
@@ -145,6 +189,54 @@ class TestTransactionRoutes:
         assert data["status"] == "error"
         assert "valid JSON" in data["message"]
 
+    def test_validate_transaction_unexpected_error(self, client, sample_transaction):
+        with patch(
+            "playground_stream_ingest.src.routes.transaction_routes.validator.full_validation",
+            side_effect=Exception("Simulated validation error"),
+        ):
+            signature, body = create_signature_and_body(sample_transaction)
+            response = client.post(
+                "/api/transactions/validate",
+                data=body,
+                content_type="application/json",
+                headers={"X-Signature": signature},
+            )
+            assert response.status_code == 500
+            data = json.loads(response.data)
+            assert data["status"] == "error"
+            assert "Unexpected error during validation" in data["message"]
+            assert "Simulated validation error" in data["error"]
+
+    def test_validate_transaction_missing_transaction_data(self, client, sample_transaction):
+        with patch(
+            "playground_stream_ingest.src.routes.transaction_routes.validator.full_validation",
+            side_effect=Exception("Simulated validation error"),
+        ):
+            signature, body = create_signature_and_body({})
+            response = client.post(
+                "/api/transactions/validate",
+                data=body,
+                content_type="application/json",
+                headers={"X-Signature": signature},
+            )
+            assert response.status_code == 400
+            data = json.loads(response.data)
+            assert data["status"] == "error"
+            assert "Request body must contain valid JSON" in data["message"]
+
+    def test_service_status_exception(self, client):
+        """Test /api/status returns 500 and error message if an exception occurs."""
+        with patch(
+            "playground_stream_ingest.src.routes.transaction_routes.dlq.get_dlq_stats",
+            side_effect=Exception("Simulated status error"),
+        ):
+            response = client.get("/api/status")
+            assert response.status_code == 500
+            data = response.get_json()
+            assert data["status"] == "error"
+            assert "Failed to get service status" in data["message"]
+            assert "Simulated status error" in data["error"]
+
     def test_service_status_endpoint(self, client):
         """Test the service status endpoint."""
         response = client.get("/api/status")
@@ -169,6 +261,19 @@ class TestTransactionRoutes:
         assert isinstance(data["dlq_messages"], list)
         assert isinstance(data["count"], int)
 
+    def test_get_dlq_messages_exception(self, client):
+        """Test /api/dlq/messages returns 500 and error message if an exception occurs."""
+        with patch(
+            "playground_stream_ingest.src.routes.transaction_routes.dlq.get_dlq_messages",
+            side_effect=Exception("Simulated status error"),
+        ):
+            response = client.get("/api/dlq/messages")
+            assert response.status_code == 500
+            data = response.get_json()
+            assert data["status"] == "error"
+            assert "Failed to get DLQ messages" in data["message"]
+            assert "Simulated status error" in data["error"]
+
     def test_get_published_messages_endpoint(self, client):
         """Test the published messages endpoint."""
         response = client.get("/api/published/messages")
@@ -180,6 +285,19 @@ class TestTransactionRoutes:
         assert "count" in data
         assert isinstance(data["published_messages"], list)
         assert isinstance(data["count"], int)
+
+    def test_get_published_messages_exception(self, client):
+
+        with patch(
+            "playground_stream_ingest.src.routes.transaction_routes.publisher.get_published_messages",
+            side_effect=Exception("Simulated status error"),
+        ):
+            response = client.get("/api/published/messages")
+            assert response.status_code == 500
+            data = response.get_json()
+            assert data["status"] == "error"
+            assert "Failed to get published messages" in data["message"]
+            assert "Simulated status error" in data["error"]
 
     def test_ingest_transaction_minimal_valid(self, client, minimal_transaction):
         """Test transaction ingestion with minimal valid transaction."""

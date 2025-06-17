@@ -1,0 +1,59 @@
+on:
+  workflow_call:
+    inputs:
+      microservice:
+        required: true
+        type: string
+      set_up_python:
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  container-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: |
+          cd "${{ github.workspace }}/cloud-dock"
+          docker build -t test -f ${{ inputs.microservice }}/Dockerfile .
+
+      - name: Set up cache for Trivy database
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/trivy
+          key: ${{ runner.os }}-trivy-cache
+
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Trivy security scan
+        run: |
+          trivy image --exit-code 1 --format table --ignore-unfixed test
+
+      - name: Authenticate to GCP
+      - uses: actions/checkout@v4
+      - name: Decode GCP service account key and set env
+        run: |
+          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > "${{ github.workspace }}/gcp-key.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/gcp-key.json" >> $GITHUB_ENV
+
+      - name: Set up python
+        if: inputs.set_up_python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Set up Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: Integration tests
+        run: |
+          cd "${{ github.workspace }}/cloud-dock/${{ inputs.microservice }}"
+          bash tests/int_test.sh

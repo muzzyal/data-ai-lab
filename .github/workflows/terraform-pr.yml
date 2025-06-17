@@ -1,9 +1,7 @@
-name: Terraform Pull Request CI
-
+name: Terraform Only
 on:
-  pull_request:
-    branches:
-      - main
+  workflow_call:
+  workflow_dispatch: {}
 
 jobs:
   terraform-checks:
