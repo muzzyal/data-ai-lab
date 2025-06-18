@@ -23,4 +23,4 @@ jobs:
                   export PYTHONPATH=$CLOUDDOCK
                   cd "${CLOUDDOCK}/${{ inputs.microservice }}"
                   pip install poetry
-                  bash `pwd`/.github/utils/python_pr.sh
+                  bash "${CLOUDDOCK}/actions_utils/python_pr.sh"
