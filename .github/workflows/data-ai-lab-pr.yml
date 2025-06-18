@@ -38,25 +38,25 @@ jobs:
           CHANGED=$(git diff --name-only HEAD^ HEAD | grep '^infra/' || true)
           echo "required=$([ -n "$CHANGED" ] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
 
-  cloudrun-unit-tests:
+  cloudrun:
     needs: detect_changes
-    if: needs.detect_changes.outputs.services_matrix != 'null'
+    if: needs.detect_changes.outputs.services_matrix != ''
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJson(needs.detect_changes.outputs.services_matrix) }}
-    uses: ./.github/workflows/python-pr.yml
-    with:
-      microservice: ${{ matrix.subdir }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-  cloudrun-container-tests:
-    needs: detect_changes
-    if: needs.detect_changes.outputs.services_matrix != 'null'
-    runs-on: ubuntu-latest
-    strategy:
-      matrix: ${{ fromJson(needs.detect_changes.outputs.services_matrix) }}
-    uses: ./.github/workflows/docker-pr.yml
-    with:
-      microservice: ${{ matrix.subdir }}
+      - name: Unit Tests
+        uses: ./.github/workflows/python-pr.yml
+        with:
+          microservice: ${{ matrix.subdir }}
+
+      - name: Container Tests
+        uses: ./.github/workflows/docker-pr.yml
+        with:
+          microservice: ${{ matrix.subdir }}
 
   terraform:
     needs: [detect_changes, cloudrun]
