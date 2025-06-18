@@ -16,6 +16,9 @@ fi
 python3 -m venv tmp
 source tmp/bin/activate
 
+# install bandit for security checks
+pip install bandit
+
 # install test dependencies
 poetry install
 
