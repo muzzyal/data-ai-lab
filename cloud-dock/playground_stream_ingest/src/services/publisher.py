@@ -94,7 +94,7 @@ class PubSubPublisher:
         import time
 
         # Small delay to simulate network latency
-        time.sleep(random.uniform(0.01, 0.05))
+        time.sleep(random.uniform(0.01, 0.05))  # nosec
 
         # Ability to simulate a network error for testing
         if os.getenv("SIMULATE_NETWORK_ERROR", "false").lower() == "true":
