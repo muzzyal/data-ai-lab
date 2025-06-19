@@ -37,7 +37,7 @@ module "playground_datasets" {
 module "playground_project" {
   source = "./modules/playground_project"
 
-  product_name                    = "playground_project"
+  product_name                    = "playground_msc_project"
   location                        = var.default_region
   project_id                      = var.project_id
   project_no                      = var.project_no
