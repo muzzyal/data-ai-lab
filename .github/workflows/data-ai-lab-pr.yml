@@ -52,6 +52,8 @@ jobs:
     uses: ./.github/workflows/docker-pr.yml
     with:
       microservice: ${{ matrix.subdir }}
+    secrets:
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
 
   terraform:
     needs: [detect_changes, cloudrun-unit-tests, cloudrun-container-tests]
