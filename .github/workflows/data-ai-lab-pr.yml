@@ -1,0 +1,98 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'cloud-dock/**'
+      - 'infra/**'
+
+jobs:
+  detect_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      services_matrix: ${{ steps.get-service-dirs.outputs.matrix }}
+      needs_terraform: ${{ steps.check-terraform.outputs.required }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed services
+        id: get-service-dirs
+        run: |
+          DIRS=$(git diff --name-only HEAD^ HEAD | grep '^cloud-dock/' | cut -d'/' -f2 | sort | uniq || true)
+          if [ -n "$DIRS" ]; then
+            echo "matrix={\"include\":[$(echo "$DIRS" | sed 's/.*/{\"subdir\":\"&\"}/' | paste -sd,)]}" >> $GITHUB_OUTPUT
+          else
+            echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check Terraform changes
+        id: check-terraform
+        run: |
+          CHANGED=$(git diff --name-only HEAD^ HEAD | grep '^infra/' || true)
+          echo "required=$([ -n "$CHANGED" ] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
+
+  cloudrun-unit-tests:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.services_matrix != ''
+    strategy:
+      matrix: ${{ fromJson(needs.detect_changes.outputs.services_matrix) }}
+    uses: ./.github/workflows/python-pr.yml
+    with:
+      microservice: ${{ matrix.subdir }}
+
+  cloudrun-container-tests:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.services_matrix != ''
+    strategy:
+      matrix: ${{ fromJson(needs.detect_changes.outputs.services_matrix) }}
+    uses: ./.github/workflows/docker-pr.yml
+    with:
+      microservice: ${{ matrix.subdir }}
+    secrets:
+      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
+  terraform:
+    needs: [detect_changes, cloudrun-unit-tests, cloudrun-container-tests]
+    runs-on: ubuntu-latest
+    if: needs.detect_changes.outputs.needs_terraform == 'true'
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode GCP service account key and set env
+        run: |
+          set +x
+          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > "${{ github.workspace }}/gcp-key.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/gcp-key.json" >> $GITHUB_ENV
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
+
+      - name: Terraform Format Check
+        run:  |
+          cd infra
+          terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run:  |
+          cd infra
+          terraform init
+
+      - name: Terraform Validate
+        run:  |
+          cd infra
+          terraform validate
+
+      - name: Run tfsec (Security Analysis)
+        uses: aquasecurity/tfsec-action@v1.0.0
+
+      - name: Terraform Plan
+        run:  |
+          cd infra
+          terraform plan -no-color

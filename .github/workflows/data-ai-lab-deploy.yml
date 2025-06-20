@@ -1,0 +1,106 @@
+name: Data AI Lab Deploy CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  detect_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      services_matrix: ${{ steps.get-service-dirs.outputs.matrix }}
+      needs_terraform: ${{ steps.check-terraform.outputs.required }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed services
+        id: get-service-dirs
+        run: |
+          DIRS=$(git diff --name-only HEAD^ HEAD | grep '^cloud-dock/' | cut -d'/' -f2 | sort | uniq || true)
+          if [ -n "$DIRS" ]; then
+            echo "matrix={\"include\":[$(echo "$DIRS" | sed 's/.*/{\"subdir\":\"&\"}/' | paste -sd,)]}" >> $GITHUB_OUTPUT
+          else
+            echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check Terraform changes
+        id: check-terraform
+        run: |
+          CHANGED=$(git diff --name-only HEAD^ HEAD | grep '^infra/' || true)
+          echo "required=$([ -n "$CHANGED" ] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
+
+  build-and-push-cloudrun:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.services_matrix != ''
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+    strategy:
+      matrix: ${{ fromJson(needs.detect_changes.outputs.services_matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Decode GCP service account key and set env
+        run: |
+          set +x
+          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > "${{ github.workspace }}/gcp-key.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/gcp-key.json" >> $GITHUB_ENV
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Read version from version.txt
+        id: version
+        run: |
+          VERSION=$(cat cloud-dock/${{ matrix.subdir }}/version.txt)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE="gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ matrix.subdir }}:${{ steps.version.outputs.version }}"
+          cd cloud-dock/${{ matrix.subdir }}
+          docker build -t "$IMAGE" .
+          gcloud auth configure-docker
+          docker push "$IMAGE"
+
+      - name: Deploy to Cloud Run
+        run: |
+          IMAGE="gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ matrix.subdir }}:${{ steps.version.outputs.version }}"
+          gcloud run deploy ${{ matrix.subdir }} \
+            --image="$IMAGE" \
+            --region=${{ secrets.GCP_REGION }} \
+            --platform=managed \
+            --quiet
+
+  terraform-apply:
+    needs: [detect_changes, build-and-push-cloudrun]
+    if: needs.detect_changes.outputs.needs_terraform == 'true'
+    runs-on: ubuntu-latest
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Decode GCP service account key and set env
+        run: |
+          set +x
+          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > "${{ github.workspace }}/gcp-key.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/gcp-key.json" >> $GITHUB_ENV
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
+
+      - name: Terraform Init
+        run:  |
+          cd infra
+          terraform init
+
+      - name: Terraform Apply
+        run:  |
+          cd infra
+          terraform apply -auto-approve -no-color

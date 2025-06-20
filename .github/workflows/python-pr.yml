@@ -1,0 +1,27 @@
+on:
+    workflow_call:
+        inputs:
+            microservice:
+                required: true
+                type: string
+
+jobs:
+    python-tests:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Set up python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: '3.11'
+
+            - name: Run tests
+              run: |
+                  export BASEDIR=`pwd`
+                  export CLOUDDOCK=`pwd`/cloud-dock
+                  export PYTHONPATH=$CLOUDDOCK
+                  cd "${CLOUDDOCK}/${{ inputs.microservice }}"
+                  pip install poetry
+                  bash "${BASEDIR}/.github/utils/python_pr.sh"

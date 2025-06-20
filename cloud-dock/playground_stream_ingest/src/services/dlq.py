@@ -102,7 +102,7 @@ class DeadLetterQueue:
         import random
 
         # Small delay to simulate network latency
-        time.sleep(random.uniform(0.005, 0.02))
+        time.sleep(random.uniform(0.005, 0.02))  # nosec
 
         logger.debug(f"Message sent to DLQ successfully: {dlq_message['dlq_message_id']}")
 

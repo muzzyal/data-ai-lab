@@ -1,16 +1,84 @@
 import pytest
 import sys
+import hmac
+import binascii
+import hashlib
 import os
+import json
+from unittest.mock import patch
 
-# Add the parent directory to the Python path so we can import our modules
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+project_id = "test-project"
+topic_name = "test-topic"
+dlq_topic_name = "test-dlq-topic"
+secret_id = "test-secret-id"
 
-from src.app import create_app
+
+def retrieve_secret_key() -> str:
+    """Retrieve secret key in hex format for HMAC generation."""
+    secret_id = os.environ["SECRET_ID"]
+    return secret_id.encode("utf-8").hex()
+
+
+def failed_retrieve_secret_key():
+    """Simulate a failed secret key retrieval for testing purposes."""
+    return "", False, f"Failed to retrieve secret {secret_id} for project {project_id}."
+
+
+def create_signature_and_body(data: dict) -> tuple:
+    """Generate HMAC signature for testing from a dict.
+
+    Args:
+        data (dict): Data to be signed.
+
+    Returns:
+        tuple(str, bytes): Signature in hex format and serialized JSON body as bytes.
+    """
+
+    secret_key = retrieve_secret_key()
+    # Serialize dict to JSON bytes in a consistent way
+    body = json.dumps(data, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+    # Generate HMAC signature
+    signature = hmac.new(binascii.a2b_hex(secret_key), body, hashlib.sha512).hexdigest()
+
+    return signature, body
+
+
+def mock_fetch_secret_success():
+    secret_key = secret_id.encode("utf-8")
+    return secret_key, True, ""
+
+
+@pytest.fixture(autouse=True, scope="session")
+def mock_secret_retrieval():
+    with patch("playground_stream_ingest.src.config_loader.loader.get_secret_key", mock_fetch_secret_success):
+        yield
+
+
+@pytest.fixture(autouse=True, scope="session")
+def mock_env_retrieval():
+    os.environ["GOOGLE_CLOUD_PROJECT"] = project_id
+    os.environ["PUBSUB_TOPIC_NAME"] = topic_name
+    os.environ["DLQ_TOPIC_NAME"] = dlq_topic_name
+    os.environ["SECRET_ID"] = secret_id
+    yield
 
 
 @pytest.fixture
-def app():
+def app(mock_env_retrieval, mock_secret_retrieval):
+    from playground_stream_ingest.src.app import create_app
+
+    app = create_app()
+    app.config["TESTING"] = True
+    app.config["WTF_CSRF_ENABLED"] = False
+    return app
+
+
+@pytest.fixture
+def app(mock_env_retrieval, mock_secret_retrieval):
     """Create and configure a test instance of the Flask app."""
+    from playground_stream_ingest.src.app import create_app
+
     app = create_app()
     app.config["TESTING"] = True
     app.config["WTF_CSRF_ENABLED"] = False
@@ -20,6 +88,9 @@ def app():
 @pytest.fixture
 def client(app):
     """Create a test client for the Flask app."""
+    secret_key = retrieve_secret_key()
+
+    app.config["SECRET_KEY"] = secret_key
     return app.test_client()
 
 

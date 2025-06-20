@@ -94,10 +94,10 @@ class PubSubPublisher:
         import time
 
         # Small delay to simulate network latency
-        time.sleep(random.uniform(0.01, 0.05))
+        time.sleep(random.uniform(0.01, 0.05))  # nosec
 
-        # Simulate occasional failures (1% failure rate for better test reliability)
-        if random.random() < 0.01:
+        # Ability to simulate a network error for testing
+        if os.getenv("SIMULATE_NETWORK_ERROR", "false").lower() == "true":
             raise Exception("Simulated network error during publishing")
 
         logger.debug(f"Message simulated publish successful: {message['message_id']}")
