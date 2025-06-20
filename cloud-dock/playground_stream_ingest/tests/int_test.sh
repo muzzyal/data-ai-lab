@@ -11,7 +11,7 @@ SECRET_VERSION="latest"
 SIGNATURE_ALG="SHA512"
 
 bq query --use_legacy_sql=false \
-'DELETE FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE JSON_VALUE(data.transaction_id) = "intTest_123456789"'
+'DELETE FROM `${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}` WHERE JSON_VALUE(data.transaction_id) = "intTest_123456789"'
 
 PORT=8080
 
