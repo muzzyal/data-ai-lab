@@ -103,3 +103,9 @@ if [ "$ROWSINT" -eq 0 ]; then
   echo "Table does not contain rows"
   exit 1
 fi
+
+# Clean up any previous test data in BigQuery
+bq query --use_legacy_sql=false \
+"DELETE FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE JSON_VALUE(data.transaction_id) = \"intTest_123456789\""
+
+echo "Test completed successfully. Cleaned up test data in BigQuery."
