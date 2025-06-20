@@ -49,7 +49,7 @@ if [ -z "$SECRET" ]; then
 fi
 
 # Testing transaction ingestion
-JSON_FILE="tests/payload_example/transaction_example.json.json"
+JSON_FILE="playground_stream_ingest/tests/payload_example/transaction_example.json.json"
 
 if [ ! -f "$JSON_FILE" ]; then
     echo "JSON file $JSON_FILE not found!"
