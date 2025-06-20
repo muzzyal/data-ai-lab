@@ -1,0 +1,13 @@
+{
+    "transaction_id": "intTest_123456789",
+    "customer_id": "cust_987654321",
+    "amount": 99.99,
+    "currency": "USD",
+    "transaction_type": "purchase",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "merchant_id": "merch_555666777",
+    "description": "Online purchase at Example Store",
+    "payment_method": {"type": "credit_card", "last_four": "1234", "provider": "Visa"},
+    "location": {"country": "US", "city": "New York", "postal_code": "10001"},
+    "metadata": {"source": "web", "user_agent": "Mozilla/5.0...", "session_id": "sess_abc123"}
+}
