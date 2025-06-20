@@ -34,6 +34,7 @@ docker run -d --name mock-api -p 8080:${PORT} -e PORT=${PORT} \
 -e PUBSUB_TOPIC_NAME="${PUBSUB_TOPIC}" \
 -e DLQ_TOPIC_NAME="${DLQ_TOPIC_NAME}" \
 -e SECRET_ID="${SECRET_ID}" \
+-e USE_REAL_PUBSUB="true" \
 -v "${GOOGLE_APPLICATION_CREDENTIALS}:/tmp/keys/FILE_NAME.json:ro" test
 
 # Wait for the service to start
