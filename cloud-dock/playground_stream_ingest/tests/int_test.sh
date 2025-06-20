@@ -108,4 +108,4 @@ fi
 bq query --use_legacy_sql=false \
 "DELETE FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE JSON_VALUE(data.transaction_id) = \"intTest_123456789\""
 
-echo "Test completed successfully. Cleaned up test data in BigQuery."
+echo "Test completed successfully, cleaned up test data in BigQuery."
