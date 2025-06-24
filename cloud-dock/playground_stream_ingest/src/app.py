@@ -53,7 +53,7 @@ def create_app():
             }
         )
 
-    logger.info("Flask application created successfully")
+    logger.info("Flask application created successfully.")
     return app
 
 
