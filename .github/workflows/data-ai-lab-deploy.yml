@@ -61,7 +61,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           IMAGE="gcr.io/muz-designed-msc-data-ai-2025/${{ matrix.subdir }}:${{ steps.version.outputs.version }}"
-          cd cloud-dock/${{ matrix.subdir }}
+          cd cloud-dock
           docker build -t "$IMAGE" .
           gcloud auth configure-docker --quiet
           docker push "$IMAGE"
