@@ -67,7 +67,9 @@ jobs:
           docker push "$IMAGE"
 
   terraform-apply:
-    needs: [detect_changes, build-and-push-cloudrun]
+    needs:
+      - detect_changes
+      - build-and-push-cloudrun
     if: needs.detect_changes.outputs.needs_terraform == 'true'
     runs-on: ubuntu-latest
     env:
