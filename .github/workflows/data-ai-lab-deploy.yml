@@ -60,28 +60,11 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          GCP_PROJECT_ID=$(gcloud config get-value project)
-          if [ -z "$PROJECT_ID" ]; then
-            echo "ERROR: Failed to get GCP project ID"
-            exit 1
-          fi
-          IMAGE="gcr.io/${GCP_PROJECT_ID}/${{ matrix.subdir }}:${{ steps.version.outputs.version }}"
+          IMAGE="gcr.io/muz-designed-msc-data-ai-2025/${{ matrix.subdir }}:${{ steps.version.outputs.version }}"
           cd cloud-dock/${{ matrix.subdir }}
           docker build -t "$IMAGE" .
           gcloud auth configure-docker --quiet
           docker push "$IMAGE"
-
-      - name: Deploy to Cloud Run
-        env:
-          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-          GCP_REGION: ${{ secrets.GCP_REGION }}
-        run: |
-          IMAGE="gcr.io/${GCP_PROJECT_ID}/${{ matrix.subdir }}:${{ steps.version.outputs.version }}"
-          gcloud run deploy ${{ matrix.subdir }} \
-            --image="$IMAGE" \
-            --region=${GCP_REGION} \
-            --platform=managed \
-            --quiet
 
   terraform-apply:
     needs: [detect_changes, build-and-push-cloudrun]
