@@ -44,11 +44,6 @@ jobs:
     uses: ./.github/workflows/python-pr.yml
     with:
       microservice: ${{ matrix.subdir }}
-    if: ${{ fromJson(needs.detect_changes.outputs.services_matrix).include[0].subdir == 'dummy' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Skip Docker builds
-        run: echo "No cloud-dock changes detected, skipping builds"
 
   cloudrun-container-tests:
     needs: detect_changes
@@ -60,14 +55,20 @@ jobs:
       microservice: ${{ matrix.subdir }}
     secrets:
       GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
+  skip-container-tests:
+    needs: detect_changes
     if: ${{ fromJson(needs.detect_changes.outputs.services_matrix).include[0].subdir == 'dummy' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Skip Docker builds
-        run: echo "No cloud-dock changes detected, skipping builds"
+      - run: echo "No service changes to deploy"
 
   terraform:
-    needs: [detect_changes, cloudrun-unit-tests, cloudrun-container-tests]
+    needs:
+      - detect_changes
+      - cloudrun-unit-tests
+      - cloudrun-container-tests
+      - skip-container-tests
     if: needs.detect_changes.outputs.needs_terraform == 'true'
     runs-on: ubuntu-latest
     env:
