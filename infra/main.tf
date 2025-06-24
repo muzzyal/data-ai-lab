@@ -17,6 +17,14 @@ module "dataform" {
   ]
 }
 
+module "artefact_registry" {
+  source = "./modules/artefact_registry"
+
+  region        = "europe-west2"
+  repository_id = "cloud-dock"
+  description   = "Cloud Dock Repository"
+}
+
 # playground datasets
 module "playground_datasets" {
   source = "./modules/dataset_warehousing"
