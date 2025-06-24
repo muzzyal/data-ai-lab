@@ -5,10 +5,10 @@ variable "region" {
 
 variable "repository_id" {
   description = "Repository ID"
-  type        = number
+  type        = string
 }
 
 variable "description" {
   description = "Repository description"
-  type        = number
+  type        = string
 }
