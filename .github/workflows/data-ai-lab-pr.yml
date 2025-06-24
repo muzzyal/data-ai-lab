@@ -26,7 +26,8 @@ jobs:
           if [ -n "$DIRS" ]; then
             echo "matrix={\"include\":[$(echo "$DIRS" | sed 's/.*/{\"subdir\":\"&\"}/' | paste -sd,)]}" >> $GITHUB_OUTPUT
           else
-            echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
+            echo "matrix={\"include\":[{\"subdir\":\"dummy\"}]}"  # Fallback dummy value
+            echo "matrix={\"include\":[{\"subdir\":\"dummy\"}]}" >> $GITHUB_OUTPUT
           fi
 
       - name: Check Terraform changes
@@ -37,7 +38,7 @@ jobs:
 
   cloudrun-unit-tests:
     needs: detect_changes
-    if: needs.detect_changes.outputs.services_matrix != ''
+    if: ${{ fromJson(needs.detect_changes.outputs.services_matrix).include[0].subdir != 'dummy' }}
     strategy:
       matrix: ${{ fromJson(needs.detect_changes.outputs.services_matrix) }}
     uses: ./.github/workflows/python-pr.yml
@@ -46,7 +47,7 @@ jobs:
 
   cloudrun-container-tests:
     needs: detect_changes
-    if: needs.detect_changes.outputs.services_matrix != ''
+    if: ${{ fromJson(needs.detect_changes.outputs.services_matrix).include[0].subdir != 'dummy' }}
     strategy:
       matrix: ${{ fromJson(needs.detect_changes.outputs.services_matrix) }}
     uses: ./.github/workflows/docker-pr.yml
@@ -56,10 +57,7 @@ jobs:
       GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
 
   terraform:
-    needs:
-      - detect_changes
-      - cloudrun-unit-tests
-      - cloudrun-container-tests
+    needs: [detect_changes, cloudrun-unit-tests, cloudrun-container-tests]
     if: needs.detect_changes.outputs.needs_terraform == 'true'
     runs-on: ubuntu-latest
     env:
