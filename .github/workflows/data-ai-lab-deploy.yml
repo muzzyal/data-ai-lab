@@ -59,9 +59,12 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build and Push Docker Image
-        env:
-          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
         run: |
+          GCP_PROJECT_ID=$(gcloud config get-value project)
+          if [ -z "$PROJECT_ID" ]; then
+            echo "ERROR: Failed to get GCP project ID"
+            exit 1
+          fi
           IMAGE="gcr.io/${GCP_PROJECT_ID}/${{ matrix.subdir }}:${{ steps.version.outputs.version }}"
           cd cloud-dock/${{ matrix.subdir }}
           docker build -t "$IMAGE" .
