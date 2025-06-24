@@ -43,14 +43,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Decode GCP service account key and set env
-        run: |
-          set +x
-          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > "${{ github.workspace }}/gcp-key.json"
-          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/gcp-key.json" >> $GITHUB_ENV
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+        uses: 'google-github-actions/setup-gcloud@v2'
 
       - name: Read version from version.txt
         id: version
@@ -60,7 +59,7 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          IMAGE="gcr.io/muz-designed-msc-data-ai-2025/${{ matrix.subdir }}:${{ steps.version.outputs.version }}"
+          IMAGE="gcr.io/muz-designed-msc-data-ai-2025/cloud-dock/${{ matrix.subdir }}:${{ steps.version.outputs.version }}"
           cd cloud-dock
           docker build -t "$IMAGE" -f ./${{ matrix.subdir }}/Dockerfile .
           gcloud auth configure-docker --quiet
