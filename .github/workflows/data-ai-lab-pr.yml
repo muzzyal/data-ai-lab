@@ -57,7 +57,10 @@ jobs:
       GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
 
   terraform:
-    needs: [detect_changes, cloudrun-unit-tests, cloudrun-container-tests]
+    needs:
+      - detect_changes
+      - cloudrun-unit-tests
+      - cloudrun-container-tests
     if: needs.detect_changes.outputs.needs_terraform == 'true'
     runs-on: ubuntu-latest
     env:
