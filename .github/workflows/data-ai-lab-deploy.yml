@@ -19,19 +19,19 @@ jobs:
       - name: Get changed services
         id: get-service-dirs
         run: |
-          DIRS=$(git diff --name-only HEAD^ HEAD | grep '^cloud-dock/' | cut -d'/' -f2 | sort | uniq || true)
+          git fetch origin main --depth=1
+          DIRS=$(git diff --name-only origin/main HEAD | grep '^cloud-dock/' | cut -d'/' -f2 | sort | uniq || true)
           if [ -n "$DIRS" ]; then
             echo "matrix={\"include\":[$(echo "$DIRS" | sed 's/.*/{\"subdir\":\"&\"}/' | paste -sd,)]}" >> $GITHUB_OUTPUT
           else
-            echo "matrix={\"include\":[{\"subdir\":\"dummy\"}]}"  # Fallback dummy value
             echo "matrix={\"include\":[{\"subdir\":\"dummy\"}]}" >> $GITHUB_OUTPUT
           fi
 
       - name: Check Terraform changes
         id: check-terraform
         run: |
-          BASE_REF="${{ github.event.pull_request.base.sha }}"
-          CHANGED=$(git diff --name-only "$BASE_REF" HEAD | grep '^infra/' || true)
+          git fetch origin main --depth=1
+          CHANGED=$(git diff --name-only origin/main HEAD | grep '^infra/' || true)
           echo "Detected infra changes:"
           echo "$CHANGED"
           echo "required=$([ -n "$CHANGED" ] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
