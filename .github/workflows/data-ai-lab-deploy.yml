@@ -70,7 +70,7 @@ jobs:
     needs:
       - detect_changes
       - build-and-push-cloudrun
-    if: needs.detect_changes.outputs.needs_terraform == 'true'
+    if: needs.detect_changes.outputs.needs_terraform == 'true' && always()
     runs-on: ubuntu-latest
     env:
       GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
