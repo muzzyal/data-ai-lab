@@ -35,6 +35,8 @@ jobs:
         run: |
           BASE_REF="${{ github.event.pull_request.base.sha }}"
           CHANGED=$(git diff --name-only "$BASE_REF" HEAD | grep '^infra/' || true)
+          echo "Detected infra changes:"
+          echo "$CHANGED"
           echo "required=$([ -n "$CHANGED" ] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
 
   cloudrun-unit-tests:
