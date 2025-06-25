@@ -1,4 +1,3 @@
-# create a cloud run service for evotime webhooks
 resource "google_cloud_run_service" "stream_ingest" {
   name     = "playground-stream-ingest"
   location = var.location
@@ -52,10 +51,10 @@ resource "google_cloud_run_service" "stream_ingest" {
 }
 
 # invoker
-resource "google_cloud_run_service_iam_binding" "run_webhook_invoker" {
-  location = google_cloud_run_service.webhook.location
-  project  = google_cloud_run_service.webhook.project
-  service  = google_cloud_run_service.webhook.name
+resource "google_cloud_run_service_iam_binding" "run_stream_ingest_invoker" {
+  location = google_cloud_run_service.stream_ingest.location
+  project  = google_cloud_run_service.stream_ingest.project
+  service  = google_cloud_run_service.stream_ingest.name
   role     = "roles/run.invoker"
   members  = ["allUsers"]
 }
