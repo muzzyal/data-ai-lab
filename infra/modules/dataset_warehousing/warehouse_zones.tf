@@ -26,11 +26,9 @@ module "curated_dataset" {
   default_table_expiration_ms = null
   delete_contents_on_destroy  = var.delete_contents_on_destroy
   dataset_editor_members = concat(
-    var.landing_zone_editor_members,
     [var.dataform_sa_member]
   )
   dataset_viewer_members = concat(
-    var.landing_zone_viewer_members,
     var.curated_layer_viewer_members
   )
   builder_sa_email    = var.builder_sa_email
