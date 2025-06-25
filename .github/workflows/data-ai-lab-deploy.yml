@@ -19,22 +19,26 @@ jobs:
       - name: Get changed services
         id: get-service-dirs
         run: |
-          git fetch origin main --depth=1
-          DIRS=$(git diff --name-only origin/main HEAD | grep '^cloud-dock/' | cut -d'/' -f2 | sort | uniq || true)
+          DIRS=$(git diff --name-only HEAD^ HEAD | grep '^cloud-dock/' | cut -d'/' -f2 | sort | uniq || true)
           if [ -n "$DIRS" ]; then
             echo "matrix={\"include\":[$(echo "$DIRS" | sed 's/.*/{\"subdir\":\"&\"}/' | paste -sd,)]}" >> $GITHUB_OUTPUT
           else
+            echo "matrix={\"include\":[{\"subdir\":\"dummy\"}]}"  # Fallback dummy value
             echo "matrix={\"include\":[{\"subdir\":\"dummy\"}]}" >> $GITHUB_OUTPUT
           fi
 
       - name: Check Terraform changes
         id: check-terraform
         run: |
-          git fetch origin main --depth=1
-          CHANGED=$(git diff --name-only origin/main HEAD | grep '^infra/' || true)
-          echo "Detected infra changes:"
-          echo "$CHANGED"
-          echo "required=$([ -n "$CHANGED" ] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
+          DIRS=$(git diff --name-only HEAD^ HEAD | grep '^infra/' | cut -d'/' -f2 | sort | uniq)
+          if [ -n "$DIRS" ]; then
+            echo "Detected infra changes:"
+            echo "$DIRS"
+            echo "required=true" >> $GITHUB_OUTPUT
+          else
+            echo "No infra changes detected."
+            echo "required=false" >> $GITHUB_OUTPUT
+          fi
 
   build-and-push-cloudrun:
     needs: detect_changes
