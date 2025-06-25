@@ -57,11 +57,7 @@ module "playground_project" {
   service_account_member          = module.playground_datasets.landing_zone_default_sa_member
   service_account_email           = module.playground_datasets.landing_zone_default_sa_email
   builder_sa_email                = local.builder_sa_email
-  topic_publisher_members = [
-    module.playground_datasets.landing_zone_default_sa_member
-  ]
-  secret_id = "playground_project_stream_secret"
-  secret_members = [
-    module.playground_datasets.landing_zone_default_sa_member,
-  ]
+  topic_publisher_members         = [module.playground_datasets.landing_zone_default_sa_member]
+  secret_id                       = "playground_project_stream_secret"
+  secret_members                  = [module.playground_datasets.landing_zone_default_sa_member]
 }
