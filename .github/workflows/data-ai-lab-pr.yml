@@ -39,8 +39,14 @@ jobs:
           echo "$CHANGED"
           echo "required=$([ -n "$CHANGED" ] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
 
-  cloudrun-unit-tests:
+  debug-needs-terraform:
     needs: detect_changes
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "needs_terraform = ${{ needs.detect_changes.outputs.needs_terraform }}"
+
+  cloudrun-unit-tests:
+    needs: debug-needs-terraform
     if: ${{ fromJson(needs.detect_changes.outputs.services_matrix).include[0].subdir != 'dummy' }}
     strategy:
       matrix: ${{ fromJson(needs.detect_changes.outputs.services_matrix) }}
