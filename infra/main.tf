@@ -32,7 +32,7 @@ module "playground_datasets" {
   domain_name                  = "msc_playground"
   project_id                   = var.project_id
   location                     = var.default_region
-  landing_zone_editor_members  = []
+  landing_zone_editor_members  = ["serviceAccount:service-${var.project_no}@gcp-sa-pubsub.iam.gserviceaccount.com"]
   landing_zone_viewer_members  = []
   curated_layer_viewer_members = []
   builder_sa_email             = local.builder_sa_email
