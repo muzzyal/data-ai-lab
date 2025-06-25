@@ -51,11 +51,13 @@ module "playground_project" {
   project_no                      = var.project_no
   dataset_id                      = module.playground_datasets.raw_dataset_name
   cloud_run_batch_ingest_version  = "0.0.0"
-  cloud_run_stream_ingest_version = "0.0.0"
+  cloud_run_stream_ingest_version = "0.1.0"
+  pubsub_topic_name               = "playground_project_topic"
+  dlq_topic_name                  = "playground_project_dlq"
   service_account_member          = module.playground_datasets.landing_zone_default_sa_member
   service_account_email           = module.playground_datasets.landing_zone_default_sa_email
   builder_sa_email                = local.builder_sa_email
-  topic_publisher_members         = []
+  topic_publisher_members         = [module.playground_datasets.landing_zone_default_sa_email]
   secret_id                       = "playground_project_stream_secret"
   secret_members = [
     module.playground_datasets.landing_zone_default_sa_member,
