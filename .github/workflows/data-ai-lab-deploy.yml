@@ -23,18 +23,22 @@ jobs:
           if [ -n "$DIRS" ]; then
             echo "matrix={\"include\":[$(echo "$DIRS" | sed 's/.*/{\"subdir\":\"&\"}/' | paste -sd,)]}" >> $GITHUB_OUTPUT
           else
-            echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
+            echo "matrix={\"include\":[{\"subdir\":\"dummy\"}]}"  # Fallback dummy value
+            echo "matrix={\"include\":[{\"subdir\":\"dummy\"}]}" >> $GITHUB_OUTPUT
           fi
 
       - name: Check Terraform changes
         id: check-terraform
         run: |
-          CHANGED=$(git diff --name-only HEAD^ HEAD | grep '^infra/' || true)
+          BASE_REF="${{ github.event.pull_request.base.sha }}"
+          CHANGED=$(git diff --name-only "$BASE_REF" HEAD | grep '^infra/' || true)
+          echo "Detected infra changes:"
+          echo "$CHANGED"
           echo "required=$([ -n "$CHANGED" ] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
 
   build-and-push-cloudrun:
     needs: detect_changes
-    if: needs.detect_changes.outputs.services_matrix != ''
+    if: ${{ fromJson(needs.detect_changes.outputs.services_matrix).include[0].subdir != 'dummy' }}
     runs-on: ubuntu-latest
     env:
       GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
@@ -43,13 +47,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - name: Decode GCP service account key and set env
+        run: |
+          set +x
+          echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > "${{ github.workspace }}/gcp-key.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/gcp-key.json" >> $GITHUB_ENV
 
       - name: Set up Cloud SDK
-        uses: 'google-github-actions/setup-gcloud@v2'
+        uses: google-github-actions/setup-gcloud@v2
 
       - name: Read version from version.txt
         id: version
@@ -59,7 +64,7 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          IMAGE="gcr.io/muz-designed-msc-data-ai-2025/cloud-dock/${{ matrix.subdir }}:${{ steps.version.outputs.version }}"
+          IMAGE="gcr.io/muz-designed-msc-data-ai-2025/${{ matrix.subdir }}:${{ steps.version.outputs.version }}"
           cd cloud-dock
           docker build -t "$IMAGE" -f ./${{ matrix.subdir }}/Dockerfile .
           gcloud auth configure-docker --quiet
