@@ -3,7 +3,8 @@ locals {
     "storage",
     "compute",
     "iam",
-    "pubsub"
+    "pubsub",
+    "artifactregistry"
   ]
 }
 
