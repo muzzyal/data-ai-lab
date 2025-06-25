@@ -39,14 +39,8 @@ jobs:
           echo "$CHANGED"
           echo "required=$([ -n "$CHANGED" ] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
 
-  debug-needs-terraform:
-    needs: detect_changes
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "needs_terraform = ${{ needs.detect_changes.outputs.needs_terraform }}"
-
   cloudrun-unit-tests:
-    needs: debug-needs-terraform
+    needs: detect_changes
     if: ${{ fromJson(needs.detect_changes.outputs.services_matrix).include[0].subdir != 'dummy' }}
     strategy:
       matrix: ${{ fromJson(needs.detect_changes.outputs.services_matrix) }}
@@ -65,20 +59,12 @@ jobs:
     secrets:
       GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
 
-  skip-container-tests:
-    needs: detect_changes
-    if: ${{ fromJson(needs.detect_changes.outputs.services_matrix).include[0].subdir == 'dummy' }}
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "No service changes to deploy"
-
   terraform:
     needs:
       - detect_changes
       - cloudrun-unit-tests
       - cloudrun-container-tests
-      - skip-container-tests
-    if: needs.detect_changes.outputs.needs_terraform == 'true'
+    if: needs.detect_changes.outputs.needs_terraform == 'true' && always()
     runs-on: ubuntu-latest
     env:
       GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
