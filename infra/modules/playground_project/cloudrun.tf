@@ -6,7 +6,7 @@ resource "google_cloud_run_service" "stream_ingest" {
   template {
     spec {
       containers {
-        image = "europe-west2-docker.pkg.dev/muz-designed-msc-data-ai-2025/launchpad/cloud-dock:${var.cloud_run_stream_ingest_version}"
+        image = "europe-west2-docker.pkg.dev/muz-designed-msc-data-ai-2025/cloud-dock/playground_stream_ingest:${var.cloud_run_stream_ingest_version}"
         env {
           name  = "GOOGLE_CLOUD_PROJECT"
           value = var.project_id
