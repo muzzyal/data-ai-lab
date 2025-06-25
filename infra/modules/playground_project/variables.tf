@@ -15,6 +15,16 @@ variable "secret_id" {
   type        = string
 }
 
+variable "pubsub_topic_name" {
+  description = "ID for the secret"
+  type        = string
+}
+
+variable "dlq_topic_name" {
+  description = "ID for the secret"
+  type        = string
+}
+
 variable "secret_members" {
   description = "List of members to assign access to"
   type        = list(string)
