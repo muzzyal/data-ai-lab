@@ -17,6 +17,14 @@ module "dataform" {
   ]
 }
 
+module "artefact_registry" {
+  source = "./modules/artefact_registry"
+
+  region        = "europe-west2"
+  repository_id = "cloud-dock"
+  description   = "Cloud Dock Repository"
+}
+
 # playground datasets
 module "playground_datasets" {
   source = "./modules/dataset_warehousing"
@@ -24,7 +32,7 @@ module "playground_datasets" {
   domain_name                  = "msc_playground"
   project_id                   = var.project_id
   location                     = var.default_region
-  landing_zone_editor_members  = []
+  landing_zone_editor_members  = ["serviceAccount:service-${var.project_no}@gcp-sa-pubsub.iam.gserviceaccount.com"]
   landing_zone_viewer_members  = []
   curated_layer_viewer_members = []
   builder_sa_email             = local.builder_sa_email
