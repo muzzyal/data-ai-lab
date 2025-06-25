@@ -33,7 +33,8 @@ jobs:
       - name: Check Terraform changes
         id: check-terraform
         run: |
-          CHANGED=$(git diff --name-only HEAD^ HEAD | grep '^infra/' || true)
+          BASE_REF="${{ github.event.pull_request.base.sha }}"
+          CHANGED=$(git diff --name-only "$BASE_REF" HEAD | grep '^infra/' || true)
           echo "required=$([ -n "$CHANGED" ] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
 
   cloudrun-unit-tests:
