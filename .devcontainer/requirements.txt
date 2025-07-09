@@ -13,3 +13,4 @@ jsonschema==4.24.0
 google-cloud-pubsub==2.29.1
 Flask-SQLAlchemy==3.1.1
 psycopg2-binary==2.9.10
+poetry==2.1.3

@@ -34,10 +34,10 @@ run-docker-image:
 		-e DLQ_TOPIC_NAME=playground_project_dlq \
 		-e SECRET_ID=playground_project_stream_secret \
 		-e GOOGLE_APPLICATION_CREDENTIALS=/home/.config/gcloud/application_default_credentials.json \
-		-e PORT=8080 \
-		-p 8080:8080 \
+		-e PORT=3000 \
+		-p 3000:3000 \
 		-v ~/.config/gcloud:/home/.config/gcloud \
 		${APP}
 
 test-coverage:
-	python3 -m pytest --cov=playground_stream_ingest.src --cov-report=xml --cov-report=html --cov-report=term --cov-branch
+	python3 -m pytest --cov=$(APP).src --cov-report=xml --cov-report=html --cov-report=term --cov-branch
