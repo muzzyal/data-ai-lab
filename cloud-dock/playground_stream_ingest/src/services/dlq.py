@@ -17,16 +17,16 @@ class DeadLetterQueue:
         self.dlq_topic_name = dlq_topic_name
         self.dlq_messages = []  # Store for testing/verification
 
-        # Initialize Pub/Sub client only if running in production
+        # initialise Pub/Sub client only if running in production
         self.use_real_pubsub = os.environ.get("USE_REAL_PUBSUB", "false").lower() == "true"
         if self.use_real_pubsub:
             self.publisher = pubsub_v1.PublisherClient()
             self.dlq_topic_path = self.publisher.topic_path(self.project_id, self.dlq_topic_name)
-            logger.info(f"DeadLetterQueue initialized with real Pub/Sub for topic: {self.dlq_topic_path}")
+            logger.info(f"DeadLetterQueue initialised with real Pub/Sub for topic: {self.dlq_topic_path}")
         else:
             self.publisher = None
             self.dlq_topic_path = None
-            logger.info(f"DeadLetterQueue initialized in simulation mode for topic: {self.dlq_topic_name}")
+            logger.info(f"DeadLetterQueue initialised in simulation mode for topic: {self.dlq_topic_name}")
 
     def send_to_dlq(
         self,

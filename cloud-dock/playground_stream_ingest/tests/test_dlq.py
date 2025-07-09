@@ -58,15 +58,15 @@ class TestDeadLetterQueue:
         # Clear any previous messages
         self.dlq.clear_dlq_messages()
 
-    def test_dlq_initialization(self):
-        """Test that the DLQ initializes correctly."""
+    def test_dlq_initialisation(self):
+        """Test that the DLQ initialises correctly."""
         assert self.dlq is not None
         assert self.dlq.project_id == os.environ["GOOGLE_CLOUD_PROJECT"]
         assert self.dlq.dlq_topic_name == os.environ["DLQ_TOPIC_NAME"]
         assert len(self.dlq.dlq_messages) == 0
 
-    def test_dlq_custom_initialization(self):
-        """Test DLQ initialization with custom parameters."""
+    def test_dlq_custom_initialisation(self):
+        """Test DLQ initialisation with custom parameters."""
         custom_dlq = DeadLetterQueue(project_id="custom-project", dlq_topic_name="custom-dlq")
         assert custom_dlq.project_id == "custom-project"
         assert custom_dlq.dlq_topic_name == "custom-dlq"

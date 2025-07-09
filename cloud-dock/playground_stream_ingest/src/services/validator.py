@@ -15,7 +15,7 @@ class TransactionValidator:
 
     def __init__(self):
         self.schema = TRANSACTION_SCHEMA
-        logger.info("TransactionValidator initialized")
+        logger.info("TransactionValidator initialised")
 
     def verify_signature(self, signature, body, secret):
         """Verify HMAC signature for the transaction data.

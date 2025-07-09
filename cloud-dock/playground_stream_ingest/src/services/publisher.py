@@ -18,16 +18,16 @@ class PubSubPublisher:
         self.topic_name = topic_name
         self.published_messages = []  # Store for testing/verification
 
-        # Initialize Pub/Sub client only if running in production
+        # initialise Pub/Sub client only if running in production
         self.use_real_pubsub = os.environ.get("USE_REAL_PUBSUB", "false").lower() == "true"
         if self.use_real_pubsub:
             self.publisher = pubsub_v1.PublisherClient()
             self.topic_path = self.publisher.topic_path(self.project_id, self.topic_name)
-            logger.info(f"PubSubPublisher initialized with real Pub/Sub for topic: {self.topic_path}")
+            logger.info(f"PubSubPublisher initialised with real Pub/Sub for topic: {self.topic_path}")
         else:
             self.publisher = None
             self.topic_path = None
-            logger.info(f"PubSubPublisher initialized in simulation mode for topic: {self.topic_name}")
+            logger.info(f"PubSubPublisher initialised in simulation mode for topic: {self.topic_name}")
 
     def publish_message(self, data: Dict[str, Any], attributes: Optional[Dict[str, str]] = None) -> str:
         """

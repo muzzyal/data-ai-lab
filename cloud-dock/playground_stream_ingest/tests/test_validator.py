@@ -26,8 +26,8 @@ class TestTransactionValidator:
         """Set up test fixtures before each test method."""
         self.validator = TransactionValidator()
 
-    def test_validator_initialization(self):
-        """Test that the validator initializes correctly."""
+    def test_validator_initialisation(self):
+        """Test that the validator initialises correctly."""
         assert self.validator is not None
         assert self.validator.schema is not None
 

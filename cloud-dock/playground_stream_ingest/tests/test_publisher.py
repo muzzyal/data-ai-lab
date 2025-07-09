@@ -61,15 +61,15 @@ class TestPubSubPublisher:
         # Clear any previous messages
         self.publisher.clear_published_messages()
 
-    def test_publisher_initialization(self):
-        """Test that the publisher initializes correctly."""
+    def test_publisher_initialisation(self):
+        """Test that the publisher initialises correctly."""
         assert self.publisher is not None
         assert self.publisher.project_id == os.environ["GOOGLE_CLOUD_PROJECT"]
         assert self.publisher.topic_name == os.environ["PUBSUB_TOPIC_NAME"]
         assert len(self.publisher.published_messages) == 0
 
-    def test_publisher_custom_initialization(self):
-        """Test publisher initialization with custom parameters."""
+    def test_publisher_custom_initialisation(self):
+        """Test publisher initialisation with custom parameters."""
         custom_publisher = PubSubPublisher(project_id="custom-project", topic_name="custom-topic")
         assert custom_publisher.project_id == "custom-project"
         assert custom_publisher.topic_name == "custom-topic"

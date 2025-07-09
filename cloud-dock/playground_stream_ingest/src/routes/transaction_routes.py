@@ -14,7 +14,7 @@ transaction_bp = Blueprint("transactions", __name__)
 
 project_id, topic_name, dlq_topic_name, secret_id = retrieve_environment_variables()
 
-# Initialize services
+# initialise services
 validator = TransactionValidator()
 publisher = PubSubPublisher(project_id, topic_name)
 dlq = DeadLetterQueue(project_id, dlq_topic_name)
