@@ -2,10 +2,12 @@
 Tests for Pub/Sub publisher service.
 """
 
-import pytest
 import json
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 from google.cloud.exceptions import GoogleCloudError
+
 from playground_batch_ingest.src.services.publisher import BatchPublisher
 
 

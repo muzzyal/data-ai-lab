@@ -5,9 +5,11 @@ Tests for configuration loader.
 import sys
 
 print("PYTHON EXECUTABLE:", sys.executable)
-import pytest
 import os
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
+
 from playground_batch_ingest.src.config_loader.loader import ConfigLoader, config_loader
 
 

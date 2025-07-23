@@ -2,10 +2,12 @@
 Tests for Flask batch processing routes.
 """
 
-import pytest
-import json
 import base64
-from unittest.mock import patch, MagicMock
+import json
+from unittest.mock import MagicMock, patch
+
+import pytest
+
 from playground_batch_ingest.src.app import create_app
 from playground_batch_ingest.src.routes.batch_routes import get_batch_processor
 

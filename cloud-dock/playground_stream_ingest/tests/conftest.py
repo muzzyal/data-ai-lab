@@ -1,11 +1,12 @@
-import pytest
-import sys
-import hmac
 import binascii
 import hashlib
-import os
+import hmac
 import json
+import os
+import sys
 from unittest.mock import patch
+
+import pytest
 
 project_id = "test-project"
 topic_name = "test-topic"

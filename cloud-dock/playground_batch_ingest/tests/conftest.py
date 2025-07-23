@@ -1,7 +1,8 @@
-import pytest
-import tempfile
-import pandas as pd
 import os
+import tempfile
+
+import pandas as pd
+import pytest
 
 
 @pytest.fixture(autouse=True)

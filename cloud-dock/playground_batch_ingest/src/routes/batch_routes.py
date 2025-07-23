@@ -5,12 +5,12 @@ Flask routes for batch ingestion service.
 import base64
 import json
 import logging
-from flask import Blueprint, request, jsonify
-from typing import Dict, Any
+from typing import Any, Dict
 
-from playground_batch_ingest.src.services.batch_processor import BatchProcessor
+from flask import Blueprint, jsonify, request
+
 from playground_batch_ingest.src.config_loader.loader import config_loader
-
+from playground_batch_ingest.src.services.batch_processor import BatchProcessor
 
 logger = logging.getLogger(__name__)
 

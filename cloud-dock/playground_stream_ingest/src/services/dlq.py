@@ -1,9 +1,10 @@
-import logging
 import json
+import logging
 import os
-from typing import Dict, Any, Optional
-from datetime import datetime, timezone
 import uuid
+from datetime import datetime, timezone
+from typing import Any, Dict, Optional
+
 from google.cloud import pubsub_v1
 
 logger = logging.getLogger(__name__)
@@ -98,8 +99,8 @@ class DeadLetterQueue:
         Simulate sending message to DLQ.
         In a real implementation, this would publish to the actual DLQ topic.
         """
-        import time
         import random
+        import time
 
         # Small delay to simulate network latency
         time.sleep(random.uniform(0.005, 0.02))  # nosec

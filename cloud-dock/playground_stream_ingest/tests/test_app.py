@@ -1,6 +1,7 @@
 from unittest.mock import patch
-import pytest
+
 import flask as Flask
+import pytest
 from playground_stream_ingest.tests.conftest import failed_retrieve_secret_key
 
 

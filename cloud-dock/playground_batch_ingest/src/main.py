@@ -3,6 +3,7 @@ Main entry point for the batch ingestion service.
 """
 
 import os
+
 from .app import create_app
 from .config_loader.loader import config_loader
 

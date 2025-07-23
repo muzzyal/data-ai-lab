@@ -1,8 +1,9 @@
-import os
 import logging
+import os
+
 from flask import Flask, jsonify
-from werkzeug.middleware.proxy_fix import ProxyFix
 from playground_stream_ingest.src.config_loader.loader import get_secret_key
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)

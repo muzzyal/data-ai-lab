@@ -2,10 +2,12 @@
 Tests for the main batch processor orchestrator.
 """
 
-import pytest
-import tempfile
 import os
-from unittest.mock import patch, MagicMock, call
+import tempfile
+from unittest.mock import MagicMock, call, patch
+
+import pytest
+
 from playground_batch_ingest.src.services.batch_processor import BatchProcessor
 
 

@@ -4,11 +4,12 @@ Flask application factory for batch ingestion service.
 
 import logging
 import os
-from flask import Flask, jsonify
-from typing import Dict, Any
+from typing import Any, Dict
 
-from playground_batch_ingest.src.routes.batch_routes import batch_bp
+from flask import Flask, jsonify
+
 from playground_batch_ingest.src.config_loader.loader import config_loader
+from playground_batch_ingest.src.routes.batch_routes import batch_bp
 
 
 def create_app(config_override: Dict[str, Any] = None) -> Flask:

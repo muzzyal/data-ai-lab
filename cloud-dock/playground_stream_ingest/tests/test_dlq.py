@@ -1,8 +1,9 @@
-import pytest
-from unittest.mock import patch, MagicMock
-from playground_stream_ingest.src.services.dlq import DeadLetterQueue, DLQError
-import time
 import os
+import time
+from unittest.mock import MagicMock, patch
+
+import pytest
+from playground_stream_ingest.src.services.dlq import DeadLetterQueue, DLQError
 
 
 class TestDeadLetterQueueRealPubSub:

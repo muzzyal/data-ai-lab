@@ -2,10 +2,12 @@
 Tests for Flask application factory and global routes.
 """
 
-import pytest
 import json
-from unittest.mock import patch, MagicMock
-from playground_batch_ingest.src.app import create_app, setup_logging, register_error_handlers, register_global_routes
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+from playground_batch_ingest.src.app import create_app, register_error_handlers, register_global_routes, setup_logging
 
 
 @pytest.fixture

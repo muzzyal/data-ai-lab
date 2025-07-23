@@ -5,11 +5,11 @@ Pub/Sub publisher service for sending processed batch data.
 import json
 import logging
 import time
-from typing import Dict, List, Any, Optional
+import uuid
+from typing import Any, Dict, List, Optional
+
 from google.cloud import pubsub_v1
 from google.cloud.exceptions import GoogleCloudError
-import uuid
-
 
 logger = logging.getLogger(__name__)
 

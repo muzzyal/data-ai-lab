@@ -7,15 +7,14 @@ import json
 import logging
 import os
 from pathlib import Path
-from typing import Dict, List, Any, Tuple, Optional, Union, Callable
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import pandas as pd
-from jsonschema import validate, ValidationError, FormatChecker
+from jsonschema import FormatChecker, ValidationError, validate
 
-from playground_batch_ingest.src.schemas.transaction_schema import TRANSACTION_SCHEMA, TRANSACTION_CSV_HEADERS
-from playground_batch_ingest.src.schemas.shop_schema import SHOP_SCHEMA, SHOP_CSV_HEADERS
-from playground_batch_ingest.src.schemas.product_schema import PRODUCT_SCHEMA, PRODUCT_CSV_HEADERS
-
+from playground_batch_ingest.src.schemas.product_schema import PRODUCT_CSV_HEADERS, PRODUCT_SCHEMA
+from playground_batch_ingest.src.schemas.shop_schema import SHOP_CSV_HEADERS, SHOP_SCHEMA
+from playground_batch_ingest.src.schemas.transaction_schema import TRANSACTION_CSV_HEADERS, TRANSACTION_SCHEMA
 
 logger = logging.getLogger(__name__)
 

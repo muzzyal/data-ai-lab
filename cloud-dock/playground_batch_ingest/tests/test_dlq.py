@@ -2,10 +2,12 @@
 Tests for Dead Letter Queue service.
 """
 
-import pytest
 import time
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 from google.cloud.exceptions import GoogleCloudError
+
 from playground_batch_ingest.src.services.dlq import DeadLetterQueue
 
 

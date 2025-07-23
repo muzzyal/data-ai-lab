@@ -2,12 +2,14 @@
 Tests for Google Cloud Storage file handler.
 """
 
-import pytest
-import tempfile
 import os
+import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
-from google.cloud.exceptions import NotFound, GoogleCloudError
+from unittest.mock import MagicMock, patch
+
+import pytest
+from google.cloud.exceptions import GoogleCloudError, NotFound
+
 from playground_batch_ingest.src.services.gcs_handler import GCSFileHandler
 
 
