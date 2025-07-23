@@ -1,6 +1,35 @@
 """
 JSON Schema definition for shop data validation.
-This schema defines the structure and validation rules for shop/merchant data.
+
+This module contains the JSON schema and CSV header definitions for shop/merchant
+data validation. The schema enforces data integrity, business verification, and
+operational requirements for merchant onboarding and management.
+
+Schema Features:
+    - Comprehensive merchant information validation
+    - Owner verification and contact details
+    - Business address validation with geographic constraints
+    - Operating hours management
+    - Status lifecycle tracking
+    - Contact information validation
+
+Business Rules:
+    - Shop IDs must follow specific alphanumeric patterns
+    - Owner email addresses must be valid and verified
+    - Business addresses require street, city, and country
+    - Phone numbers follow international E.164 format
+    - Registration dates must be in ISO 8601 format
+    - Category classification follows business taxonomy
+
+Operational Features:
+    - Multi-channel contact management (phone, email, website)
+    - Flexible business hours with day-specific schedules
+    - Geographic location tracking for regulatory compliance
+    - Status management for business lifecycle
+    - Metadata support for custom business attributes
+
+Version: 1.0
+Last Updated: 2025-07-23
 """
 
 SHOP_SCHEMA = {

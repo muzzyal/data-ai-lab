@@ -1,6 +1,33 @@
 """
 JSON Schema definition for transaction data validation.
-This schema defines the structure and validation rules for incoming transaction data.
+
+This module contains the JSON schema and CSV header definitions for financial
+transaction data validation. The schema enforces data integrity, regulatory
+compliance, and business rules for transaction processing.
+
+Schema Features:
+    - Comprehensive transaction validation
+    - Payment method verification
+    - Currency and amount validation with precision control
+    - Geographic location tracking
+    - Merchant and customer identification
+    - Transaction type classification
+
+Business Rules:
+    - Transaction amounts must be positive and within limits
+    - Currency codes must follow ISO 4217 standards
+    - Payment methods require proper type classification
+    - Transaction IDs and customer IDs follow specific patterns
+    - Timestamps must be in ISO 8601 format
+    - Location data follows ISO country codes
+
+Compliance:
+    - Supports PCI DSS requirements for payment data
+    - Implements data minimization for sensitive information
+    - Provides audit trail with timestamps
+
+Version: 1.0
+Last Updated: 2025-07-23
 """
 
 TRANSACTION_SCHEMA = {
@@ -29,7 +56,6 @@ TRANSACTION_SCHEMA = {
             "description": "Transaction amount",
             "minimum": 0.01,
             "maximum": 1000000.00,
-            "multipleOf": 0.01,
         },
         "currency": {
             "type": "string",

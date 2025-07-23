@@ -3,7 +3,9 @@ Tests for schema validation and CSV header definitions.
 """
 
 import pytest
+import pandas as pd
 from jsonschema import validate, ValidationError, FormatChecker
+from playground_batch_ingest.src.services.csv_processor import CSVProcessor
 from playground_batch_ingest.src.schemas.transaction_schema import TRANSACTION_SCHEMA, TRANSACTION_CSV_HEADERS
 from playground_batch_ingest.src.schemas.shop_schema import SHOP_SCHEMA, SHOP_CSV_HEADERS
 from playground_batch_ingest.src.schemas.product_schema import PRODUCT_SCHEMA, PRODUCT_CSV_HEADERS
@@ -458,8 +460,25 @@ class TestSchemaEdgeCases:
             "payment_method": {"type": "credit_card"},
         }
 
-        with pytest.raises(ValidationError):
-            validate(instance=invalid_amount_transaction, schema=TRANSACTION_SCHEMA, format_checker=FormatChecker())
+        csv_processor = CSVProcessor()
+        schema_mapping = {
+            "schema": TRANSACTION_SCHEMA,
+            "headers": TRANSACTION_CSV_HEADERS,
+            "transformer": csv_processor._transform_transaction_row,
+        }
+        df = pd.DataFrame([invalid_amount_transaction])
+
+        (batch_data, batch_errors) = csv_processor._process_batch(df, schema_mapping, 0, "transaction")
+        expected_batch_errors = [
+            {
+                "row": 1,
+                "error": "Schema validation error: Amount 99.999 has more than 2 decimal places",
+                "data": invalid_amount_transaction,
+            }
+        ]
+
+        assert batch_data == []
+        assert batch_errors == expected_batch_errors
 
     def test_additional_properties_rejected(self):
         """Test that additional properties are rejected."""

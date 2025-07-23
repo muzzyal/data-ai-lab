@@ -1,0 +1,101 @@
+transaction_id,customer_id,amount,currency,transaction_type,timestamp,merchant_id,description,payment_method_type,payment_method_last_four,payment_method_provider,location_country,location_city,location_postal_code
+txn_lcgHuhQs,cust_YyHYz7ui,2750.19,INR,transfer,2025-06-29T06:40:15.888970,merch_LrZfDIcM,Transaction uxpCB,digital_wallet,7251,Stripe,AU,Berlin,76313
+txn_KM1WbkL2,cust_1GNh9Bny,3710.03,CHF,purchase,2025-06-19T06:40:15.889019,merch_mT6D354F,Transaction Q9tT4,digital_wallet,7531,Apple Pay,AU,Paris,49839
+txn_5v5oZWb4,cust_9dTIvWBD,804.02,AUD,deposit,2025-06-10T06:40:15.889058,merch_zF0CyL2r,Transaction WZMSI,credit_card,3232,Apple Pay,AU,Mumbai,63912
+txn_8uvDTSzr,cust_Qa59vYge,2255.75,JPY,refund,2025-06-19T06:40:15.889087,merch_wyqCuTkV,Transaction l9Snf,bank_transfer,6256,Square,FR,New York,25145
+txn_a2vZ00Zf,cust_XX0BnwF1,501.39,CAD,withdrawal,2025-07-06T06:40:15.889108,merch_5xCnnMKQ,Transaction b06l7,bank_transfer,8463,Mastercard,CA,London,33187
+txn_tedut1X4,cust_db2QrnUe,4980.46,CHF,purchase,2025-06-19T06:40:15.889129,,Transaction lkgBc,cash,3514,Square,AU,Mumbai,44680
+txn_FlrwpUYq,cust_eafFV6J0,434.16,AUD,withdrawal,2025-07-09T06:40:15.889146,merch_bTTEgylT,Transaction 5ylfI,bank_transfer,8422,Mastercard,GB,Sydney,54321
+txn_lE7PGunb,cust_zcl8jPUB,704.75,EUR,transfer,2025-07-08T06:40:15.889169,merch_RDE2qBHP,Transaction 6eCm6,bank_transfer,5950,Mastercard,CA,London,57813
+txn_4QbZsdWR,cust_Wmv7xOv9,4821.94,USD,purchase,2025-07-04T06:40:15.889260,merch_WVa9e8RI,Transaction afeKg,bank_transfer,5904,Mastercard,CN,Tokyo,48315
+txn_Uo8302xT,cust_MBc55rEe,3655.66,AUD,withdrawal,2025-06-17T06:40:15.889281,,Transaction UiACr,digital_wallet,3939,PayPal,CN,Sydney,14159
+txn_e0VeaDsG,cust_Sr1bwetR,2767.74,CHF,withdrawal,2025-06-10T06:40:15.889298,merch_00DLUYWn,Transaction iQnq3,cash,2168,Stripe,DE,Toronto,62841
+txn_e0fhpMI0,cust_6zeprB8z,3672.05,CNY,withdrawal,2025-07-07T06:40:15.889316,merch_cGzxeWrG,Transaction SN0w2,credit_card,8359,Square,FR,Toronto,45959
+txn_p6oV6rDL,cust_H4BQMuq1,1424.01,JPY,refund,2025-06-19T06:40:15.889335,,Transaction mhb9W,debit_card,1102,Visa,GB,Berlin,20245
+txn_cG4T2vZz,cust_glWtyDxY,896.45,CNY,refund,2025-06-26T06:40:15.889352,merch_WCiicWU8,Transaction KWfFs,bank_transfer,7440,Stripe,AU,Toronto,50380
+txn_f3Fb7kUO,cust_0IjJP5a7,3254.71,GBP,refund,2025-07-01T06:40:15.889374,merch_qTQuZ1EK,Transaction EY5Bw,bank_transfer,6113,Square,US,Toronto,17014
+txn_E74GW4TZ,cust_t9VTUFrU,4957.82,AUD,transfer,2025-07-06T06:40:15.889403,,Transaction fNLdE,credit_card,9362,Stripe,DE,New York,58012
+txn_KTEaJpho,cust_bFfMnRof,4746.37,AUD,deposit,2025-07-09T06:40:15.889426,,Transaction Myn5F,digital_wallet,2055,Square,US,Berlin,60358
+txn_vBSHmeIn,cust_NJ1W6pKj,4398.81,GBP,transfer,2025-06-15T06:40:15.889443,merch_9Ldk3qdS,Transaction qVQKc,digital_wallet,8693,PayPal,AU,Mumbai,87204
+txn_JAxRVZlQ,cust_11zMmPo6,2664.47,JPY,withdrawal,2025-06-26T06:40:15.889462,,Transaction watH8,credit_card,1358,Mastercard,JP,Shanghai,30707
+txn_S0ird2HX,cust_mNh7EAo2,4348.35,GBP,transfer,2025-07-08T06:40:15.889479,merch_vXNqcN1O,Transaction 66MNj,debit_card,3253,Visa,CN,Tokyo,65775
+txn_WNn3Tp19,cust_d39hGgx7,3810.97,EUR,withdrawal,2025-06-25T06:40:15.889501,merch_6QngjRBW,Transaction HKjTt,bank_transfer,4270,Apple Pay,JP,London,25910
+txn_j2whMWui,cust_ULP5nx0Z,2241.03,USD,purchase,2025-07-07T06:40:15.889520,,Transaction SnLrl,cash,2523,Mastercard,CN,Mumbai,48258
+txn_HCnYeJ5p,cust_FJeCwx4u,4347.42,CAD,deposit,2025-06-29T06:40:15.889536,merch_UoeT53IQ,Transaction pGUQk,cash,6166,Square,US,Sydney,19209
+txn_kI0gTeWE,cust_5QgmprPm,1046.63,GBP,withdrawal,2025-06-17T06:40:15.889555,merch_JwGPcBSW,Transaction N6X2F,credit_card,5514,Square,IN,Sydney,31925
+txn_nZZ0nJuN,cust_NjxJt6B7,73.53,AUD,withdrawal,2025-06-17T06:40:15.889577,merch_vr7W6GBT,Transaction bENQx,debit_card,7114,Visa,IN,Mumbai,28098
+txn_Q0HlVQyu,cust_yULGnPoi,21.75,CHF,transfer,2025-06-14T06:40:15.889596,,Transaction nCeiB,debit_card,2906,PayPal,IN,London,41947
+txn_FM5YmwBf,cust_iEiAPCf4,1247.65,CNY,deposit,2025-06-18T06:40:15.889614,merch_Q1OgZaNE,Transaction 7XUbw,cash,7698,PayPal,CA,Berlin,38921
+txn_B6Xz2R9W,cust_6EYfMv9R,3167.8,USD,transfer,2025-07-05T06:40:15.889635,merch_Y2PnhvHa,Transaction ZnBkq,digital_wallet,9098,PayPal,GB,Toronto,96948
+txn_bTwphA4c,cust_iy9TpFuY,2333.94,JPY,withdrawal,2025-07-07T06:40:15.889654,merch_lCOAOv8O,Transaction rP2Cb,bank_transfer,4133,Stripe,DE,Shanghai,71200
+txn_P7fxRiG9,cust_M7llfo3J,3345.17,JPY,withdrawal,2025-06-30T06:40:15.889673,merch_Yg9txGb8,Transaction XdNf5,digital_wallet,8031,Apple Pay,US,London,85501
+txn_Nv0C5DjP,cust_DpJIezMN,2696.74,USD,transfer,2025-06-11T06:40:15.889691,merch_5UxZHgFA,Transaction 81aWP,cash,3224,Mastercard,US,Sydney,81309
+txn_kBhhfDA2,cust_SX3CDQpI,491.67,GBP,transfer,2025-06-15T06:40:15.889712,,Transaction BlAOz,bank_transfer,1361,PayPal,DE,Shanghai,62233
+txn_o4GE982P,cust_eUQVommi,821.03,GBP,purchase,2025-06-29T06:40:15.889729,merch_xuv06Ke6,Transaction RJWup,credit_card,9259,PayPal,DE,Shanghai,13498
+txn_A9IY3GMl,cust_U0fGsekS,2444.96,CAD,refund,2025-06-16T06:40:15.889748,merch_qIuYR0kn,Transaction Uivll,cash,2677,Square,FR,London,72705
+txn_LevGbMt1,cust_bAAV47GH,1659.36,CNY,refund,2025-06-25T06:40:15.889769,merch_RV2l8ow9,Transaction Giucz,bank_transfer,3916,Mastercard,FR,Shanghai,95472
+txn_Ek47Qkvd,cust_r3nVCwNE,4121.64,EUR,deposit,2025-06-29T06:40:15.889788,merch_NTd2xOLQ,Transaction eRhvI,bank_transfer,8234,Mastercard,CN,Sydney,59662
+txn_jtyWfsEJ,cust_n17Tsoyq,1380.72,USD,deposit,2025-06-16T06:40:15.889807,,Transaction UyS3z,bank_transfer,5971,Apple Pay,FR,Mumbai,22351
+txn_A1BfZ3Zb,cust_eOMgukbD,2597.38,AUD,purchase,2025-06-16T06:40:15.889823,merch_X2fEb7yd,Transaction VgohR,debit_card,9398,PayPal,FR,Paris,25097
+txn_qRwldMc0,cust_Tc7cwgfP,3187.77,CAD,transfer,2025-06-30T06:40:15.889842,merch_XeYB2UK6,Transaction zleQw,digital_wallet,2235,Visa,DE,New York,47210
+txn_L3EHFxrp,cust_XGOLqZ9E,4925.12,EUR,purchase,2025-07-09T06:40:15.889861,merch_tksA3KsJ,Transaction R7yOg,credit_card,1545,Apple Pay,CA,Sydney,49793
+txn_vTlYLPpM,cust_wmqttgvn,3396.17,CAD,transfer,2025-06-11T06:40:15.889879,merch_dKae2kKS,Transaction 2ZIh6,debit_card,4890,Visa,JP,Toronto,67315
+txn_HKLt85Fq,cust_4FQ24KJd,822.76,INR,transfer,2025-06-22T06:40:15.889898,merch_wuCdC342,Transaction a3h5n,credit_card,7652,Visa,IN,New York,44816
+txn_2C4AGg34,cust_AQePYI0g,2593.27,INR,transfer,2025-06-15T06:40:15.889918,,Transaction Niyo0,credit_card,3233,Apple Pay,CA,Toronto,55734
+txn_5BRtPsFo,cust_uCckDOa1,2644.78,CHF,withdrawal,2025-06-22T06:40:15.889936,merch_qRTjtNEi,Transaction yy1wn,credit_card,7810,Stripe,CN,Tokyo,81361
+txn_jqmpE49u,cust_0VL4OBih,3822.56,INR,deposit,2025-06-16T06:40:15.889956,merch_gMh4FXW7,Transaction LSIUA,digital_wallet,5775,Mastercard,CA,Shanghai,60963
+txn_Xk9LAaXt,cust_YiWMpfEd,472.69,CNY,refund,2025-06-17T06:40:15.889975,merch_W54zQVXZ,Transaction RI8xF,cash,4925,Mastercard,GB,Paris,76169
+txn_rR8rESNQ,cust_oatrWUj7,1349.74,EUR,purchase,2025-06-24T06:40:15.889993,merch_c7zYHMfD,Transaction t6vwU,cash,1511,Square,IN,Toronto,72941
+txn_mYJhmQbD,cust_vLK4qgPK,2194.71,INR,transfer,2025-06-24T06:40:15.890012,merch_tHUtyXId,Transaction jW3sm,credit_card,1288,Apple Pay,IN,London,95227
+txn_9zLbrN3a,cust_0MF4t9xt,511.27,CHF,transfer,2025-06-24T06:40:15.890030,,Transaction ulHKJ,bank_transfer,9858,Visa,AU,Paris,32563
+txn_MjMiGzp0,cust_GrybNdW9,4171.29,CHF,deposit,2025-07-02T06:40:15.890046,merch_TOqaxrvQ,Transaction KMN6o,bank_transfer,9153,Square,CN,London,92255
+txn_al7Sa4Ga,cust_GMj9a4DV,3488.33,CHF,deposit,2025-07-09T06:40:15.890065,merch_WKFuWnwb,Transaction 6lbhR,cash,6128,Stripe,GB,Sydney,70108
+txn_ISzSpKKS,cust_G06ZSQyW,3015.49,CHF,withdrawal,2025-06-30T06:40:15.890083,merch_iXd098FD,Transaction DXeS9,credit_card,5767,PayPal,CA,Paris,59750
+txn_4Om6gxop,cust_MCBhUP06,4388.14,CHF,deposit,2025-06-23T06:40:15.890104,merch_sQmuT6pn,Transaction xPY5F,credit_card,7869,Visa,FR,Toronto,54945
+txn_z2Gx7n6M,cust_jfgpCwHU,2342.33,CAD,transfer,2025-06-15T06:40:15.890125,merch_oaFZxI7g,Transaction M6fG5,digital_wallet,4386,Mastercard,DE,Paris,17431
+txn_3GTtjSz8,cust_SAVlC9F7,473.26,CAD,transfer,2025-07-04T06:40:15.890146,merch_oQYHv2aJ,Transaction BBADR,debit_card,8197,Square,CA,Shanghai,10955
+txn_VGSTFPZ1,cust_6juBx1a6,126.41,AUD,withdrawal,2025-07-08T06:40:15.890165,merch_pw2Ov9HI,Transaction 6FIao,cash,5000,Square,CA,London,67091
+txn_wJ3EQuW2,cust_VxpDXz9I,2315.65,AUD,refund,2025-06-28T06:40:15.890183,merch_WT0zfeFo,Transaction PNnFh,debit_card,9402,Square,CN,Toronto,67364
+txn_ZBhim2do,cust_WK3c4q0i,726.13,CAD,transfer,2025-07-06T06:40:15.890201,merch_5mM7swit,Transaction i8LqZ,bank_transfer,9733,Square,CN,New York,59369
+txn_xgws85jz,cust_Y3gKFo0G,4837.78,CAD,refund,2025-07-08T06:40:15.890220,merch_zByqterS,Transaction FUray,bank_transfer,8848,Square,GB,Mumbai,44921
+txn_jOTTnAd3,cust_Box3nyrG,3488.11,CNY,withdrawal,2025-07-01T06:40:15.890239,merch_LiRjdesU,Transaction dfnRx,digital_wallet,3546,Apple Pay,JP,Shanghai,10942
+txn_oPoVunX5,cust_IwP4G6Me,479.18,CAD,withdrawal,2025-06-24T06:40:15.890258,merch_2G6FNgdK,Transaction XBc0Y,bank_transfer,3105,Visa,DE,London,19055
+txn_Rwwq5zLo,cust_Lp14XlH5,3534.42,GBP,withdrawal,2025-06-12T06:40:15.890324,,Transaction EUcph,cash,9484,Visa,GB,Shanghai,90021
+txn_5BZ70t01,cust_Hn2yQbni,4561.28,EUR,withdrawal,2025-06-16T06:40:15.890344,merch_4st4RBty,Transaction Ne2hm,credit_card,1830,Square,FR,New York,68258
+txn_iWBIELwj,cust_I6qF69gm,3525.54,GBP,withdrawal,2025-06-30T06:40:15.890367,merch_nUf8xVO4,Transaction UVLTW,bank_transfer,8705,PayPal,CA,Shanghai,34426
+txn_qWqYNMGT,cust_xcYveTYD,949.42,AUD,purchase,2025-07-01T06:40:15.890388,merch_R3udzhhz,Transaction js8B1,debit_card,5560,PayPal,CA,Shanghai,12599
+txn_zJ2RHirr,cust_VewtoAbP,642.5,JPY,withdrawal,2025-06-19T06:40:15.890408,merch_orPDwCYM,Transaction 5QZYu,bank_transfer,3005,Square,CA,Shanghai,79891
+txn_WkNYIrs7,cust_tOpW53ZS,3642.09,AUD,refund,2025-06-28T06:40:15.890427,merch_55JcTedJ,Transaction t0i0b,cash,8450,Visa,AU,Paris,82407
+txn_6AUbgOf4,cust_odZ7eAjl,941.24,EUR,withdrawal,2025-07-02T06:40:15.890446,merch_mtxWhbya,Transaction hJWWW,bank_transfer,4795,Apple Pay,DE,Shanghai,97243
+txn_XAQXZhgT,cust_ZR66zVx7,1581.75,GBP,deposit,2025-06-19T06:40:15.890465,merch_Eze5R1wJ,Transaction WmJYA,credit_card,7011,Square,US,New York,86059
+txn_zfg7QViN,cust_JDcfMwyB,4014.72,CNY,transfer,2025-07-02T06:40:15.890484,,Transaction UDa7X,debit_card,9223,Visa,CA,New York,60511
+txn_Ne5uAu71,cust_OdUpASwB,550.33,EUR,purchase,2025-07-07T06:40:15.890500,merch_ftD599io,Transaction ooJWf,cash,6472,Visa,GB,Shanghai,88534
+txn_yyHvuIns,cust_ALnWIgTx,3131.56,EUR,refund,2025-06-12T06:40:15.890518,merch_oHnUTTY7,Transaction WF4Oa,bank_transfer,3863,Apple Pay,IN,New York,26712
+txn_hE0JL4Dv,cust_YIwR5sFJ,1287.09,AUD,deposit,2025-07-09T06:40:15.890537,merch_IomP92dw,Transaction uw2Nc,cash,7147,Visa,AU,Berlin,29399
+txn_YBsplyw6,cust_zP9HvaSG,1258.65,CHF,deposit,2025-06-23T06:40:15.890556,,Transaction Loa0c,credit_card,6730,Stripe,IN,Berlin,40178
+txn_J3XXDvnq,cust_grXYlScE,3448.3,AUD,transfer,2025-06-14T06:40:15.890577,,Transaction BIwv1,cash,1407,Stripe,US,Berlin,46889
+txn_Wlstdewn,cust_bg2psiLV,923.49,JPY,purchase,2025-07-09T06:40:15.890594,merch_eAMX6U0A,Transaction zwsZS,cash,5375,Square,AU,Mumbai,34686
+txn_qjWPLZUz,cust_hRg2K6Lj,4214.04,CNY,transfer,2025-06-15T06:40:15.890613,,Transaction wJzoW,credit_card,6304,Stripe,IN,Shanghai,21395
+txn_NNo9BP2j,cust_tiWrZ5Y5,2336.96,AUD,purchase,2025-06-19T06:40:15.890630,merch_aLpa1XN5,Transaction FO5oM,bank_transfer,9910,PayPal,FR,Berlin,77118
+txn_MTT7N4q8,cust_XdjE3vfv,4629.75,AUD,purchase,2025-06-25T06:40:15.890651,merch_8crnck3P,Transaction jWch0,credit_card,1437,Stripe,GB,Sydney,37911
+txn_jEQEd3RA,cust_ADaXkVuQ,1331.41,CAD,deposit,2025-07-04T06:40:15.890670,merch_gCFHp6WN,Transaction 9eSsd,bank_transfer,3946,Apple Pay,FR,Tokyo,12236
+txn_S79SBT7w,cust_tr9irUgS,1588.38,USD,transfer,2025-06-19T06:40:15.890688,merch_6qzUssYa,Transaction 5yf7l,debit_card,7656,Mastercard,JP,London,56054
+txn_HqbEq7p8,cust_5cuGVvKy,774.02,JPY,withdrawal,2025-06-10T06:40:15.890707,,Transaction jfMLg,credit_card,6741,Apple Pay,IN,Toronto,75193
+txn_ABYtFHwQ,cust_O7f7GVuo,4981.3,INR,deposit,2025-06-20T06:40:15.890723,merch_keCI3gia,Transaction KYV7e,digital_wallet,5330,Stripe,DE,Mumbai,75256
+txn_BlzXnaNj,cust_Q5wisSnR,796.6,CNY,withdrawal,2025-07-01T06:40:15.890741,merch_vrcYDHa9,Transaction jtoOu,credit_card,4997,Mastercard,CN,London,70997
+txn_W1kYJnwi,cust_XvcILbPQ,3101.83,GBP,transfer,2025-06-28T06:40:15.890762,merch_zKXAc2Zr,Transaction OcZz7,cash,1965,Mastercard,DE,Paris,95270
+txn_EnoiQdAQ,cust_zkA79tGx,942.36,EUR,transfer,2025-06-10T06:40:15.890783,merch_GY6mzDcJ,Transaction xWixS,digital_wallet,8302,Stripe,AU,Tokyo,61463
+txn_TWY03CPv,cust_2ImUU5rq,1758.52,USD,deposit,2025-07-09T06:40:15.890802,merch_HmQ8ctjZ,Transaction qNV8D,digital_wallet,5175,Square,FR,Sydney,16356
+txn_jznq8emY,cust_iYL8flgs,4252.11,USD,withdrawal,2025-06-11T06:40:15.890821,merch_98zAe3Xx,Transaction SD4S6,debit_card,6132,Visa,CA,Berlin,75352
+txn_MrdSyV2H,cust_0KnO8lGA,1507.36,GBP,purchase,2025-06-20T06:40:15.890840,merch_URouHvTF,Transaction mrx3M,digital_wallet,3500,Square,FR,Tokyo,40537
+txn_dJieZJqK,cust_CBXLmxcA,2480.54,JPY,withdrawal,2025-06-17T06:40:15.890858,,Transaction m94op,credit_card,9052,Stripe,JP,Paris,99976
+txn_N6h8YOSg,cust_K2v0rrkM,4614.75,INR,refund,2025-07-08T06:40:15.890874,merch_aZ1Ycqaq,Transaction qX3Bf,debit_card,2455,Visa,AU,Toronto,68328
+txn_ahpF3ClP,cust_CKXuXI8E,4341.17,GBP,purchase,2025-06-20T06:40:15.890893,,Transaction LzLlr,credit_card,9008,Square,IN,New York,84092
+txn_rCO8JF3G,cust_aTVTz5iN,616.19,USD,purchase,2025-06-30T06:40:15.890909,merch_GNoqQYse,Transaction BXX2i,credit_card,1137,Square,JP,London,52830
+txn_gqkgDatF,cust_FBRpxHzw,883.08,INR,refund,2025-06-15T06:40:15.890929,merch_mXPv7aZh,Transaction Gi8GD,digital_wallet,8772,Visa,CN,Tokyo,61451
+txn_hNkpmRTn,cust_0w3HNfRk,2371.98,EUR,refund,2025-07-05T06:40:15.890950,merch_UYJUOSXM,Transaction axXaY,credit_card,6967,Mastercard,CN,Berlin,41734
+txn_KGkWN5cU,cust_Me359Jaz,3451.74,CNY,purchase,2025-07-05T06:40:15.890969,merch_YVqB9Oyo,Transaction 8tJ9X,debit_card,5276,PayPal,US,Shanghai,59040
+txn_qol4WCdu,cust_yu1WqUcr,2714.36,CAD,refund,2025-07-02T06:40:15.890990,merch_IIrZibHh,Transaction u5u3v,debit_card,8478,Apple Pay,GB,Paris,46320
+txn_50P7KwY9,cust_gxt5OEUO,4234.89,CNY,refund,2025-06-27T06:40:15.891009,merch_w5NKfcrP,Transaction rmAa0,digital_wallet,1625,PayPal,US,New York,76150
+txn_wYRbFafd,cust_UhyVF9m5,1229.42,USD,purchase,2025-06-11T06:40:15.891027,merch_CUHZKIct,Transaction KpcW5,cash,4644,Stripe,US,Toronto,85798
+txn_rsEKGmT2,cust_w8Snp75t,4522.9,AUD,purchase,2025-06-22T06:40:15.891046,merch_bIgxhU3Z,Transaction pwon0,bank_transfer,5719,Mastercard,CA,Toronto,43125

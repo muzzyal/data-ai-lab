@@ -425,7 +425,7 @@ def test_process_batch_error_handling(csv_processor):
 
     schema_info["transformer"] = failing_transformer
 
-    batch_data, batch_errors = csv_processor._process_batch(df, schema_info, 0)
+    batch_data, batch_errors = csv_processor._process_batch(df, schema_info, 0, "transaction")
 
     assert len(batch_data) == 0
     assert len(batch_errors) == 1

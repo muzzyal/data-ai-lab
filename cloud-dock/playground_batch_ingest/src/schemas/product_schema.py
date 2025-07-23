@@ -1,6 +1,27 @@
 """
 JSON Schema definition for product data validation.
-This schema defines the structure and validation rules for product data.
+
+This module contains the JSON schema and CSV header definitions for product data
+validation. The schema enforces data integrity, business rules, and format
+constraints for product catalog information.
+
+Schema Features:
+    - Comprehensive product information validation
+    - Price validation with currency constraints
+    - Inventory tracking with quantity limits
+    - Product dimensions and attributes support
+    - Image and tag management
+    - Status lifecycle management
+
+Business Rules:
+    - All prices must be positive and within reasonable limits
+    - SKU and product IDs must follow specific patterns
+    - Inventory quantities cannot be negative
+    - Required fields ensure minimum data quality
+    - Category enumeration prevents data inconsistency
+
+Version: 1.0
+Last Updated: 2025-07-23
 """
 
 PRODUCT_SCHEMA = {
@@ -72,7 +93,6 @@ PRODUCT_SCHEMA = {
                     "description": "Product price",
                     "minimum": 0.00,
                     "maximum": 1000000.00,
-                    "multipleOf": 0.01,
                 },
                 "currency": {
                     "type": "string",
@@ -84,7 +104,6 @@ PRODUCT_SCHEMA = {
                     "type": "number",
                     "description": "Discount amount",
                     "minimum": 0.00,
-                    "multipleOf": 0.01,
                 },
                 "discount_percentage": {
                     "type": "number",
@@ -164,7 +183,7 @@ PRODUCT_SCHEMA = {
         },
         "tags": {
             "type": "array",
-            "description": "Product tags for search and categorization",
+            "description": "Product tags for search and categorisation",
             "items": {"type": "string", "maxLength": 50},
             "maxItems": 20,
         },

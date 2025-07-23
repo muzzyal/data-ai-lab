@@ -242,27 +242,27 @@ def test_cleanup_temp_directory(gcs_handler, temp_dir):
     assert os.path.exists(test_dir)  # Directory should remain
 
 
-def test_sanitize_filename(gcs_handler):
-    """Test filename sanitization."""
+def test_sanitise_filename(gcs_handler):
+    """Test filename sanitisation."""
     # Test normal filename
-    result = gcs_handler._sanitize_filename("normal_file.csv")
+    result = gcs_handler._sanitise_filename("normal_file.csv")
     assert result == "normal_file.csv"
 
     # Test filename with path separators
-    result = gcs_handler._sanitize_filename("path/to/file.csv")
+    result = gcs_handler._sanitise_filename("path/to/file.csv")
     assert result == "path_to_file.csv"
 
     # Test filename with special characters
-    result = gcs_handler._sanitize_filename("file@#$%.csv")
+    result = gcs_handler._sanitise_filename("file@#$%.csv")
     assert result == "file.csv"
 
     # Test empty filename
-    result = gcs_handler._sanitize_filename("")
+    result = gcs_handler._sanitise_filename("")
     assert result == "downloaded_file"
 
     # Test very long filename
     long_name = "a" * 300 + ".csv"
-    result = gcs_handler._sanitize_filename(long_name)
+    result = gcs_handler._sanitise_filename(long_name)
     assert len(result) <= 255
     assert result.endswith(".csv")
 

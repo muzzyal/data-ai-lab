@@ -23,7 +23,7 @@ class BatchProcessor:
     def __init__(self, config: Dict[str, Any]):
         self.config = config
 
-        # Initialize services
+        # Initialise services
         self.gcs_handler = GCSFileHandler(
             temp_dir=config.get("temp_download_path", "/tmp/batch_files"),
             max_file_size_mb=config.get("max_file_size_mb", 100),

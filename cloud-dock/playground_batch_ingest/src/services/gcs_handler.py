@@ -54,7 +54,7 @@ class GCSFileHandler:
                 return None
 
             # Create local file path
-            safe_filename = self._sanitize_filename(object_name)
+            safe_filename = self._sanitise_filename(object_name)
             local_path = self.temp_dir / safe_filename
 
             # Download the file
@@ -154,15 +154,15 @@ class GCSFileHandler:
         except Exception as e:
             logger.error(f"Error cleaning up temp directory: {e}")
 
-    def _sanitize_filename(self, filename: str) -> str:
+    def _sanitise_filename(self, filename: str) -> str:
         """
-        Sanitize filename for local filesystem.
+        Sanitise filename for local filesystem.
 
         Args:
             filename: Original filename from GCS
 
         Returns:
-            Sanitized filename safe for local filesystem
+            Sanitised filename safe for local filesystem
         """
         # Replace path separators and other problematic characters
         safe_name = filename.replace("/", "_").replace("\\", "_")

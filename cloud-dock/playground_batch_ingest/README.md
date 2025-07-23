@@ -10,7 +10,7 @@ A Cloud Run service for processing CSV files triggered by GCS events via Pub/Sub
 - **Batch Processing**: Configurable batch sizes for efficient memory usage
 - **Error Handling**: Dead Letter Queue for failed processing with detailed error tracking
 - **Concurrent Processing**: Multi-threaded file processing with configurable workers
-- **Production Ready**: Containerized for Cloud Run with proper scaling and monitoring
+- **Production Ready**: Containerised for Cloud Run with proper scaling and monitoring
 
 ## Architecture
 
