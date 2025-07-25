@@ -128,13 +128,16 @@ class CSVProcessor:
         # Generate unique headers for each data type for better detection
         self.unique_headers = self._generate_unique_headers()
 
-    def process_csv_file(self, file_path: str, data_type: Optional[str] = None) -> Dict[str, Any]:
+    def process_csv_file(
+        self, file_path: str, data_type: Optional[str] = None, gcs_object_name: Optional[str] = None
+    ) -> Dict[str, Any]:
         """
         Process a CSV file and return structured data.
 
         Args:
             file_path: Path to the CSV file
             data_type: Type of data (transaction, shop, product) - auto-detected if None
+            gcs_object_name: GCS object name for the file (used for tracking and attributes)
 
         Returns:
             Dictionary with processing results containing:
@@ -145,6 +148,7 @@ class CSVProcessor:
             - data: List of processed and validated records
             - errors: List of error details for failed rows
             - file_path: Path to the processed file
+            - gcs_object_name: GCS object name for the file (None if not provided)
 
         Raises:
             FileNotFoundError: If the specified file doesn't exist
@@ -220,6 +224,7 @@ class CSVProcessor:
                 "data": processed_data,
                 "errors": errors,
                 "file_path": file_path,
+                "gcs_object_name": gcs_object_name,
             }
 
         except Exception as e:
@@ -232,6 +237,7 @@ class CSVProcessor:
                 "data": [],
                 "errors": [{"row": 0, "error": str(e)}],
                 "file_path": file_path,
+                "gcs_object_name": gcs_object_name,
             }
 
     def _process_batch(

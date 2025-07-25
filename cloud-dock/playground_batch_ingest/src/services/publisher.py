@@ -125,6 +125,7 @@ class BatchPublisher:
             "data_type": data_type,
             "source": "batch_ingestion",
             "message_id": message_data["metadata"]["message_id"],
+            "filename": batch_context.get("gcs_object_name") or "unknown",
         }
 
         for attempt in range(self.max_retries + 1):

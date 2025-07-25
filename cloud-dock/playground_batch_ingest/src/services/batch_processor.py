@@ -141,7 +141,7 @@ class BatchProcessor:
 
             # Step 3: Process CSV file
             logger.info(f"Processing CSV file {local_file_path}")
-            processed_data = self.csv_processor.process_csv_file(local_file_path)
+            processed_data = self.csv_processor.process_csv_file(local_file_path, gcs_object_name=object_name)
 
             # Step 4: Handle validation errors
             if processed_data.get("errors"):

@@ -273,6 +273,52 @@ def test_message_structure(publisher_sim_pubsub):
     assert "message_id" in attrs
 
 
+def test_filename_attribute_with_gcs_object_name(publisher_sim_pubsub):
+    """Test that filename attribute is set correctly when gcs_object_name is provided."""
+    processed_data = {
+        "data_type": "transaction",
+        "data": [{"transaction_id": "txn_001", "amount": 100}],
+        "file_path": "/tmp/test.csv",
+        "gcs_object_name": "test/transactions_2024.csv",
+    }
+
+    publisher_sim_pubsub.publish_batch_data(processed_data)
+
+    messages = publisher_sim_pubsub.get_published_messages()
+    assert len(messages) == 1
+
+    message = messages[0]
+    attrs = message["attributes"]
+
+    # Check that filename attribute is set to the GCS object name
+    assert attrs["filename"] == "test/transactions_2024.csv"
+    assert attrs["data_type"] == "transaction"
+    assert attrs["source"] == "batch_ingestion"
+
+
+def test_filename_attribute_without_gcs_object_name(publisher_sim_pubsub):
+    """Test that filename attribute defaults to 'unknown' when gcs_object_name is not provided."""
+    processed_data = {
+        "data_type": "transaction",
+        "data": [{"transaction_id": "txn_001", "amount": 100}],
+        "file_path": "/tmp/test.csv",
+        # No gcs_object_name provided
+    }
+
+    publisher_sim_pubsub.publish_batch_data(processed_data)
+
+    messages = publisher_sim_pubsub.get_published_messages()
+    assert len(messages) == 1
+
+    message = messages[0]
+    attrs = message["attributes"]
+
+    # Check that filename attribute defaults to 'unknown'
+    assert attrs["filename"] == "unknown"
+    assert attrs["data_type"] == "transaction"
+    assert attrs["source"] == "batch_ingestion"
+
+
 def test_batch_data_error_handling(publisher_sim_pubsub, caplog):
     """Test error handling in publish_batch_data."""
     processed_data = {"data_type": "transaction", "data": [{"id": "1"}]}
