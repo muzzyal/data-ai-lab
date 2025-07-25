@@ -16,7 +16,7 @@ app = create_app()
 if __name__ == "__main__":
     config = config_loader.get_config()
     app.run(
-        host=config.get("flask_host", "0.0.0.0"),
+        host=config.get("flask_host", "0.0.0.0"),  # nosec B104 - Required for containerised deployment
         port=config.get("flask_port", 8080),
         debug=config.get("flask_debug", False),
     )

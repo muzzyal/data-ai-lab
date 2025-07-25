@@ -42,7 +42,7 @@ class ConfigLoader:
             "enable_monitoring": os.getenv("ENABLE_MONITORING", "true").lower() == "true",
             "log_level": os.getenv("LOG_LEVEL", "INFO"),
             # Flask Configuration
-            "flask_host": os.getenv("FLASK_HOST", "0.0.0.0"),
+            "flask_host": os.getenv("FLASK_HOST", "0.0.0.0"),  # nosec B104 - Required for containerised deployment
             "flask_port": int(os.getenv("PORT", "8080")),
             "flask_debug": os.getenv("FLASK_DEBUG", "false").lower() == "true",
         }
