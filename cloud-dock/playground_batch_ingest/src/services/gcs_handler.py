@@ -17,8 +17,10 @@ logger = logging.getLogger(__name__)
 class GCSFileHandler:
     """Handles file operations with Google Cloud Storage."""
 
-    def __init__(self, temp_dir: str = "/tmp/batch_files", max_file_size_mb: int = 100):
+    def __init__(self, temp_dir: str = None, max_file_size_mb: int = 100):
         self.client = storage.Client()
+        if temp_dir is None:
+            temp_dir = os.path.join(tempfile.gettempdir(), "batch_files")
         self.temp_dir = Path(temp_dir)
         self.max_file_size_bytes = max_file_size_mb * 1024 * 1024
 

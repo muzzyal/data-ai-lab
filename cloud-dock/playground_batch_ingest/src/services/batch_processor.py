@@ -4,6 +4,7 @@ Main batch processor that orchestrates file processing, validation, and publishi
 
 import json
 import logging
+import tempfile
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Dict, List, Optional
@@ -24,7 +25,7 @@ class BatchProcessor:
 
         # Initialise services
         self.gcs_handler = GCSFileHandler(
-            temp_dir=config.get("temp_download_path", "/tmp/batch_files"),
+            temp_dir=config.get("temp_download_path", tempfile.gettempdir()),
             max_file_size_mb=config.get("max_file_size_mb", 100),
         )
 

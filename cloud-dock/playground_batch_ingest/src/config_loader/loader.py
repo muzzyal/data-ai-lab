@@ -4,6 +4,7 @@ Handles environment variables for Cloud Run deployment.
 """
 
 import os
+import tempfile
 from typing import Any, Dict
 
 
@@ -25,7 +26,7 @@ class ConfigLoader:
             "subscription_name": os.getenv("SUBSCRIPTION_NAME", "gcs-file-events"),
             "use_real_pubsub": os.getenv("USE_REAL_PUBSUB", "true").lower() == "true",
             # GCS Configuration
-            "temp_download_path": os.getenv("TEMP_DOWNLOAD_PATH", "/tmp/batch_files"),
+            "temp_download_path": os.getenv("TEMP_DOWNLOAD_PATH", os.path.join(tempfile.gettempdir(), "batch_files")),
             "max_file_size_mb": int(os.getenv("MAX_FILE_SIZE_MB", "100")),
             # Processing Configuration
             "batch_size": int(os.getenv("BATCH_SIZE", "1000")),
