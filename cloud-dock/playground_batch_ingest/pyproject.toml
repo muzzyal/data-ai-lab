@@ -58,4 +58,4 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "--verbose --cov=src --cov-report=term-missing --cov-report=html"
+addopts = "--verbose --cov=playground_batch_ingest.src --cov-report=term-missing --cov-report=html"
