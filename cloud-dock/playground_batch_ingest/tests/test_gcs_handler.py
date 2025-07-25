@@ -33,7 +33,7 @@ def gcs_handler(temp_dir, mock_storage_client):
     return GCSFileHandler(temp_dir=temp_dir, max_file_size_mb=1)
 
 
-def test_gcs_handler_initialisation(temp_dir):
+def test_gcs_handler_initialisation(temp_dir, mock_storage_client):
     """Test GCS handler initialisation."""
     handler = GCSFileHandler(temp_dir=temp_dir, max_file_size_mb=5)
 
