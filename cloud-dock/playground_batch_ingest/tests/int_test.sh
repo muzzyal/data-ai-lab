@@ -91,7 +91,7 @@ echo "Validating data in BigQuery..."
 
 # Count total rows with test prefix in filename attribute
 TOTAL_ROWS=$(bq query --format=json --use_legacy_sql=false \
-"SELECT count(*) as cnt FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE JSON_VALUE(attributes.filename) LIKE '${TEST_PREFIX}%'" 2>&1 | sed '/^WARNING/d' | jq .[0].cnt)
+"SELECT count(*) as cnt FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE SAFE_CAST(JSON_EXTRACT_SCALAR(attributes, '$.filename') AS STRING) LIKE '${TEST_PREFIX}%'" 2>&1 | sed '/^WARNING/d' | jq .[0].cnt)
 
 TOTAL_ROWS_INT=$(bc <<< "$TOTAL_ROWS")
 
@@ -99,7 +99,7 @@ echo "Found ${TOTAL_ROWS_INT} total rows from test files in BigQuery"
 
 # Count products rows
 PRODUCTS_ROWS=$(bq query --format=json --use_legacy_sql=false \
-"SELECT count(*) as cnt FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE JSON_VALUE(attributes.filename) = '${TEST_PREFIX}products.csv'" 2>&1 | sed '/^WARNING/d' | jq .[0].cnt)
+"SELECT count(*) as cnt FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE SAFE_CAST(JSON_EXTRACT_SCALAR(attributes, '$.filename') AS STRING) = '${TEST_PREFIX}products.csv'" 2>&1 | sed '/^WARNING/d' | jq .[0].cnt)
 
 PRODUCTS_ROWS_INT=$(bc <<< "$PRODUCTS_ROWS")
 
@@ -107,7 +107,7 @@ echo "Found ${PRODUCTS_ROWS_INT} products rows in BigQuery"
 
 # Count shops rows
 SHOPS_ROWS=$(bq query --format=json --use_legacy_sql=false \
-"SELECT count(*) as cnt FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE JSON_VALUE(attributes.filename) = '${TEST_PREFIX}shops.csv'" 2>&1 | sed '/^WARNING/d' | jq .[0].cnt)
+"SELECT count(*) as cnt FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE SAFE_CAST(JSON_EXTRACT_SCALAR(attributes, '$.filename') AS STRING) = '${TEST_PREFIX}shops.csv'" 2>&1 | sed '/^WARNING/d' | jq .[0].cnt)
 
 SHOPS_ROWS_INT=$(bc <<< "$SHOPS_ROWS")
 
@@ -115,7 +115,7 @@ echo "Found ${SHOPS_ROWS_INT} shops rows in BigQuery"
 
 # Count transactions rows
 TRANSACTIONS_ROWS=$(bq query --format=json --use_legacy_sql=false \
-"SELECT count(*) as cnt FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE JSON_VALUE(attributes.filename) = '${TEST_PREFIX}transactions.csv'" 2>&1 | sed '/^WARNING/d' | jq .[0].cnt)
+"SELECT count(*) as cnt FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE SAFE_CAST(JSON_EXTRACT_SCALAR(attributes, '$.filename') AS STRING) = '${TEST_PREFIX}transactions.csv'" 2>&1 | sed '/^WARNING/d' | jq .[0].cnt)
 
 TRANSACTIONS_ROWS_INT=$(bc <<< "$TRANSACTIONS_ROWS")
 
@@ -147,7 +147,7 @@ echo "Data validation successful!"
 # Clean up test data from BigQuery
 echo "Cleaning up test data from BigQuery..."
 bq query --use_legacy_sql=false \
-"DELETE FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE JSON_VALUE(attributes.filename) LIKE '${TEST_PREFIX}%'"
+"DELETE FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE SAFE_CAST(JSON_EXTRACT_SCALAR(attributes, '$.filename') AS STRING) LIKE '${TEST_PREFIX}%'"
 
 # Clean up test files from GCS bucket
 echo "Cleaning up test files from GCS..."
