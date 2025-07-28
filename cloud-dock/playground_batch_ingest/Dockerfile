@@ -27,12 +27,12 @@ COPY /playground_batch_ingest ./playground_batch_ingest
 # Install Python dependencies
 RUN poetry install --directory ./playground_batch_ingest
 
-# Create temp directory for file downloads
-RUN mkdir -p /tmp/batch_files
+# Create temp directories for file downloads and keys
+RUN mkdir -p /tmp/batch_files /tmp/keys
 
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash appuser && \
-    chown -R appuser:appuser /app /tmp/batch_files
+    chown -R appuser:appuser /app /tmp/batch_files /tmp/keys
 USER appuser
 
 # Run the application
