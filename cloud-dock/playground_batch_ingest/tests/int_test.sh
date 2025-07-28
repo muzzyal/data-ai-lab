@@ -34,7 +34,7 @@ docker run -d --name batch-ingest-test -p 8080:${PORT} -e PORT=${PORT} \
 -e BUCKET_NAME="${BUCKET_NAME}" \
 -e BQ_DATASET="${BQ_DATASET}" \
 -e BQ_TABLE="${BQ_TABLE}" \
--v "${GOOGLE_APPLICATION_CREDENTIALS}:/tmp/keys/FILE_NAME.json:ro" batch-ingest
+-v "${GOOGLE_APPLICATION_CREDENTIALS}:/tmp/keys/FILE_NAME.json:ro" test
 
 # Wait for the service to start
 sleep 5
