@@ -30,10 +30,5 @@ RUN poetry install --directory ./playground_batch_ingest
 # Create temp directories for file downloads and keys
 RUN mkdir -p /tmp/batch_files /tmp/keys
 
-# Create non-root user
-RUN useradd --create-home --shell /bin/bash appuser && \
-    chown -R appuser:appuser /app /tmp/batch_files /tmp/keys
-USER appuser
-
 # Run the application
 CMD gunicorn --bind :$PORT --workers 2 --timeout 120 --max-requests 1000 --max-requests-jitter 100 --graceful-timeout 30 --access-logfile - playground_batch_ingest.src.main:app
