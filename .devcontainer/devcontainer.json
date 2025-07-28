@@ -15,7 +15,8 @@
             ],
             "settings": {
                 "python.testing.pytestArgs": [
-                    "cloud-dock"
+                    "cloud-dock",
+                    "--no-cov"
                 ],
                 "python.testing.unittestEnabled": false,
                 "python.testing.pytestEnabled": true,

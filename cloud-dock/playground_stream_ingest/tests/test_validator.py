@@ -1,13 +1,14 @@
-import pytest
-from unittest.mock import patch
-import hmac
 import binascii
 import hashlib
-import os
+import hmac
 import json
+import os
+from unittest.mock import patch
+
+import pytest
 from flask import Flask
-from playground_stream_ingest.tests.conftest import create_signature_and_body, retrieve_secret_key
 from playground_stream_ingest.src.services.validator import TransactionValidator
+from playground_stream_ingest.tests.conftest import create_signature_and_body, retrieve_secret_key
 
 
 def return_flask_app_context():
@@ -26,8 +27,8 @@ class TestTransactionValidator:
         """Set up test fixtures before each test method."""
         self.validator = TransactionValidator()
 
-    def test_validator_initialization(self):
-        """Test that the validator initializes correctly."""
+    def test_validator_initialisation(self):
+        """Test that the validator initialises correctly."""
         assert self.validator is not None
         assert self.validator.schema is not None
 

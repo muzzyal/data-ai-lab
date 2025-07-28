@@ -1,8 +1,9 @@
-import pytest
-from unittest.mock import patch, MagicMock
-from playground_stream_ingest.src.config_loader.loader import retrieve_environment_variables, get_secret_key
-import time
 import os
+import time
+from unittest.mock import MagicMock, patch
+
+import pytest
+from playground_stream_ingest.src.config_loader.loader import get_secret_key, retrieve_environment_variables
 
 
 def test_retrieve_environment_variables():

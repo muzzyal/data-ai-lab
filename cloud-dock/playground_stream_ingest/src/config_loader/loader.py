@@ -1,5 +1,6 @@
-import os
 import logging
+import os
+
 from google.cloud import secretmanager
 
 logger = logging.getLogger(__name__)

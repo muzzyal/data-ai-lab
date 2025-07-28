@@ -10,7 +10,7 @@ A production-ready Flask-based webhook ingestion service designed for Google Clo
 - **Dead Letter Queue**: Failed messages are sent to DLQ topic for monitoring and reprocessing
 - **Error Handling**: Comprehensive error handling with detailed logging
 - **Health Monitoring**: Built-in health checks and service status endpoints
-- **Production Ready**: Containerized for Cloud Run deployment with proper security
+- **Production Ready**: Containerised for Cloud Run deployment with proper security
 - **Auto-scaling**: Cloud Run automatic scaling based on incoming webhook traffic
 
 ## Architecture
@@ -100,7 +100,7 @@ The service validates transactions against a comprehensive JSON schema:
 ### Prerequisites
 
 - Python 3.11+
-- Docker (for containerization)
+- Docker (for containerisation)
 - Google Cloud SDK (for deployment)
 
 ### Setup
@@ -301,7 +301,7 @@ The service implements comprehensive error handling:
 - Minimal base image (Python slim)
 - No sensitive data in logs
 - Proper HTTP security headers
-- Input validation and sanitization
+- Input validation and sanitisation
 
 ### Environment Variables
 
@@ -389,4 +389,4 @@ For issues and questions:
 - Dead Letter Queue handling
 - Cloud Run deployment support
 - Comprehensive test suite (>95% coverage)
-- Production-ready containerization
+- Production-ready containerisation

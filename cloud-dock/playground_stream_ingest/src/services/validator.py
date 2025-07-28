@@ -1,11 +1,12 @@
-import logging
-from typing import Dict, Any, Tuple
-from jsonschema import validate, ValidationError
-from playground_stream_ingest.src.schemas.transaction_schema import TRANSACTION_SCHEMA
-import hmac
 import binascii
 import hashlib
+import hmac
+import logging
+from typing import Any, Dict, Tuple
+
 from flask import current_app as app
+from jsonschema import ValidationError, validate
+from playground_stream_ingest.src.schemas.transaction_schema import TRANSACTION_SCHEMA
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +16,7 @@ class TransactionValidator:
 
     def __init__(self):
         self.schema = TRANSACTION_SCHEMA
-        logger.info("TransactionValidator initialized")
+        logger.info("TransactionValidator initialised")
 
     def verify_signature(self, signature, body, secret):
         """Verify HMAC signature for the transaction data.
