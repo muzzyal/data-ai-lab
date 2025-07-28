@@ -19,7 +19,7 @@ echo "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS"
 # Clean up any previous test data in BigQuery (using test/ prefix in filename attribute)
 echo "Cleaning up previous test data..."
 bq query --use_legacy_sql=false \
-"DELETE FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE JSON_VALUE(attributes.filename) LIKE '${TEST_PREFIX}%'"
+"DELETE FROM \`${PROJECT_ID}.${BQ_DATASET}.${BQ_TABLE}\` WHERE SAFE_CAST(JSON_EXTRACT_SCALAR(attributes, '$.filename') AS STRING) LIKE '${TEST_PREFIX}%'"
 
 # Clean up any previous test files in GCS bucket
 echo "Cleaning up previous test files in GCS..."
