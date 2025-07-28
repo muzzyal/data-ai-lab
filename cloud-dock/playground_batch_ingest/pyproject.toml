@@ -58,4 +58,29 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "--verbose --cov=playground_batch_ingest.src --cov-report=term-missing --cov-report=html"
+addopts = "-ra -q --strict-markers"
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "tests/*",
+    "venv/*",
+    "env/*",
+    "*/site-packages/*",
+    "setup.py",
+    "conftest.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
