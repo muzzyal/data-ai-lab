@@ -6,7 +6,7 @@ import logging
 import os
 from typing import Any, Dict
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 from playground_batch_ingest.src.config_loader.loader import config_loader
 from playground_batch_ingest.src.routes.batch_routes import batch_bp
@@ -94,16 +94,51 @@ def register_error_handlers(app: Flask) -> None:
 def register_global_routes(app: Flask, config: Dict[str, Any]) -> None:
     """Register global application routes."""
 
-    @app.route("/")
+    @app.route("/", methods=["GET", "POST"])
     def index():
-        return jsonify(
-            {
-                "service": "batch_ingestion",
-                "version": "0.1.0",
-                "status": "running",
-                "environment": config.get("environment", "unknown"),
-            }
-        )
+        if request.method == "GET":
+            return jsonify(
+                {
+                    "service": "batch_ingestion",
+                    "version": "0.1.0",
+                    "status": "running",
+                    "environment": config.get("environment", "unknown"),
+                }
+            )
+        elif request.method == "POST":
+            # Handle Eventarc CloudEvent
+            logger = logging.getLogger(__name__)
+            try:
+                cloud_event = request.get_json()
+                logger.info(f"Received Eventarc CloudEvent: {cloud_event}")
+
+                # Extract GCS event data from CloudEvent
+                if not cloud_event or "data" not in cloud_event:
+                    return jsonify({"error": "Invalid CloudEvent format"}), 400
+
+                event_data = cloud_event.get("data", {})
+                bucket_name = event_data.get("bucket")
+                object_name = event_data.get("name")
+
+                if not bucket_name or not object_name:
+                    return jsonify({"error": "Missing bucket or object name in CloudEvent"}), 400
+
+                logger.info(f"Processing GCS event: bucket={bucket_name}, object={object_name}")
+
+                # Import and use the batch processor
+                from playground_batch_ingest.src.routes.batch_routes import get_batch_processor
+
+                processor = get_batch_processor()
+                result = processor.process_file(bucket_name, object_name)
+
+                return (
+                    jsonify({"success": True, "message": f"Successfully processed {object_name}", "result": result}),
+                    200,
+                )
+
+            except Exception as e:
+                logger.error(f"Error handling Eventarc CloudEvent: {e}", exc_info=True)
+                return jsonify({"error": "CloudEvent processing failed", "message": str(e)}), 500
 
     @app.route("/health")
     def health():
