@@ -4,7 +4,8 @@ locals {
     "compute",
     "iam",
     "pubsub",
-    "artifactregistry"
+    "artifactregistry",
+    "eventarc"
   ]
 }
 
