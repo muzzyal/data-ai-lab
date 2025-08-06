@@ -17,6 +17,13 @@ module "dataform" {
   ]
 }
 
+resource "google_project_iam_member" "gcs_publish_to_pubsub" {
+  project = var.project_id
+
+  role   = "roles/pubsub.publisher"
+  member = "serviceAccount:service-${var.project_no}@gs-project-accounts.iam.gserviceaccount.com"
+}
+
 module "artefact_registry" {
   source = "./modules/artefact_registry"
 
