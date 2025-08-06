@@ -14,7 +14,7 @@ resource "google_project_iam_member" "pubsubpublisher" {
 
 # Create an Eventarc trigger, routing Cloud Storage events to Cloud Run
 resource "google_eventarc_trigger" "gcs_cloud_run_trigger" {
-  name     = "${var.data_product_name}-trigger-storage-cloudrun"
+  name     = "${replace(var.data_product_name, "_", "-")}-trigger-storage-cloudrun"
   location = var.location
 
   # Capture objects changed in the bucket
