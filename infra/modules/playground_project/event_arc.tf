@@ -11,9 +11,7 @@ module "event_arc_pubsub_bigquery" {
   endpoint               = "/api/batch/gcs-event"
 
   depends_on = [
-    google_project_iam_member.gcs_publish_to_pubsub,
-    google_cloud_run_service.batch_ingest,
-    google_cloud_run_service_iam_binding.run_batch_ingest_invoker
+    google_cloud_run_service.batch_ingest
   ]
 
 }
