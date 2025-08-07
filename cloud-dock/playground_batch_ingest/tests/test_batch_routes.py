@@ -7,6 +7,7 @@ import json
 from unittest.mock import MagicMock, patch
 
 import pytest
+from cloudevents.http import CloudEvent
 
 from playground_batch_ingest.src.app import create_app
 from playground_batch_ingest.src.routes.batch_routes import get_batch_processor
@@ -44,6 +45,32 @@ def mock_batch_processor():
         yield mock_processor
 
 
+def create_cloudevent_request(bucket, object_name):
+    """Helper function to create a CloudEvent request for testing."""
+    # Create a CloudEvent
+    event = CloudEvent(
+        {
+            "type": "google.cloud.storage.object.v1.finalized",
+            "source": f"//storage.googleapis.com/projects/_/buckets/{bucket}",
+            "specversion": "1.0",
+        },
+        {"bucket": bucket, "name": object_name, "generation": "123456"},
+    )
+
+    # Convert to HTTP request format
+    headers = {
+        "ce-specversion": "1.0",
+        "ce-type": "google.cloud.storage.object.v1.finalized",
+        "ce-source": f"//storage.googleapis.com/projects/_/buckets/{bucket}",
+        "ce-id": "test-event-id",
+        "content-type": "application/json",
+    }
+
+    data = json.dumps({"bucket": bucket, "name": object_name, "generation": "123456"})
+
+    return headers, data
+
+
 def test_get_batch_processor():
     """Test get_batch_processor function."""
     with (
@@ -61,18 +88,8 @@ def test_get_batch_processor():
 
 def test_handle_gcs_event_success(client, mock_batch_processor):
     """Test successful GCS event handling."""
-    # Prepare test data
-    event_data = {"bucketId": "test-bucket", "objectId": "test-file.csv"}
-    encoded_data = base64.b64encode(json.dumps(event_data).encode()).decode()
-
-    pubsub_message = {
-        "message": {
-            "data": encoded_data,
-            "attributes": {},
-            "messageId": "123456",
-            "publishTime": "2024-01-01T12:00:00Z",
-        }
-    }
+    # Prepare CloudEvent test data
+    headers, data = create_cloudevent_request("test-bucket", "test-file.csv")
 
     # Mock successful processing
     mock_result = {
@@ -82,35 +99,26 @@ def test_handle_gcs_event_success(client, mock_batch_processor):
     }
     mock_batch_processor.process_gcs_event.return_value = mock_result
 
-    response = client.post("/api/batch/gcs-event", data=json.dumps(pubsub_message), content_type="application/json")
+    response = client.post("/api/batch/gcs-event", data=data, headers=headers)
 
     assert response.status_code == 200
     data = json.loads(response.data)
     assert data["success"] is True
 
     # Verify processor was called with correct data
-    mock_batch_processor.process_gcs_event.assert_called_once_with(event_data)
+    expected_event_data = {"bucket": "test-bucket", "name": "test-file.csv", "generation": "123456"}
+    mock_batch_processor.process_gcs_event.assert_called_once_with(expected_event_data)
 
 
 def test_handle_gcs_event_skipped(client, mock_batch_processor):
     """Test GCS event handling with skipped file."""
-    event_data = {"bucketId": "test-bucket", "objectId": "test-file.txt"}
-    encoded_data = base64.b64encode(json.dumps(event_data).encode()).decode()
-
-    pubsub_message = {
-        "message": {
-            "data": encoded_data,
-            "attributes": {},
-            "messageId": "123456",
-            "publishTime": "2024-01-01T12:00:00Z",
-        }
-    }
+    headers, data = create_cloudevent_request("test-bucket", "test-file.txt")
 
     # Mock skipped result
     mock_result = {"success": False, "skipped": True, "error": "Unsupported file type"}
     mock_batch_processor.process_gcs_event.return_value = mock_result
 
-    response = client.post("/api/batch/gcs-event", data=json.dumps(pubsub_message), content_type="application/json")
+    response = client.post("/api/batch/gcs-event", data=data, headers=headers)
 
     assert response.status_code == 200  # Skipped is still successful HTTP response
     data = json.loads(response.data)
@@ -120,75 +128,58 @@ def test_handle_gcs_event_skipped(client, mock_batch_processor):
 
 def test_handle_gcs_event_processing_error(client, mock_batch_processor):
     """Test GCS event handling with processing error."""
-    event_data = {"bucketId": "test-bucket", "objectId": "test-file.csv"}
-    encoded_data = base64.b64encode(json.dumps(event_data).encode()).decode()
-
-    pubsub_message = {
-        "message": {
-            "data": encoded_data,
-            "attributes": {},
-            "messageId": "123456",
-            "publishTime": "2024-01-01T12:00:00Z",
-        }
-    }
+    headers, data = create_cloudevent_request("test-bucket", "test-file.csv")
 
     # Mock processing error
     mock_result = {"success": False, "error": "Processing failed"}
     mock_batch_processor.process_gcs_event.return_value = mock_result
 
-    response = client.post("/api/batch/gcs-event", data=json.dumps(pubsub_message), content_type="application/json")
+    response = client.post("/api/batch/gcs-event", data=data, headers=headers)
 
     assert response.status_code == 500
     data = json.loads(response.data)
     assert data["success"] is False
 
 
-def test_handle_gcs_event_invalid_message_format(client):
-    """Test GCS event handling with invalid message format."""
-    # Missing message field
-    invalid_message = {"invalid": "format"}
+def test_handle_gcs_event_invalid_cloudevent_format(client):
+    """Test GCS event handling with invalid CloudEvent format."""
+    # Invalid CloudEvent (missing required headers)
+    headers = {"content-type": "application/json"}
+    data = json.dumps({"invalid": "format"})
 
-    response = client.post("/api/batch/gcs-event", data=json.dumps(invalid_message), content_type="application/json")
+    response = client.post("/api/batch/gcs-event", data=data, headers=headers)
+
+    assert response.status_code == 500
+    data = json.loads(response.data)
+    assert "error" in data
+
+
+def test_handle_gcs_event_no_data(client):
+    """Test GCS event handling with CloudEvent containing no data."""
+    # CloudEvent with no data
+    headers = {
+        "ce-specversion": "1.0",
+        "ce-type": "google.cloud.storage.object.v1.finalized",
+        "ce-source": "//storage.googleapis.com/projects/_/buckets/test-bucket",
+        "ce-id": "test-event-id",
+        "content-type": "application/json",
+    }
+
+    response = client.post("/api/batch/gcs-event", data="", headers=headers)
 
     assert response.status_code == 400
     data = json.loads(response.data)
-    assert "Invalid message format" in data["error"]
-
-
-def test_handle_gcs_event_missing_data(client):
-    """Test GCS event handling with missing data field."""
-    # Missing data field
-    pubsub_message = {"message": {"attributes": {}, "messageId": "123456"}}
-
-    response = client.post("/api/batch/gcs-event", data=json.dumps(pubsub_message), content_type="application/json")
-
-    assert response.status_code == 400
-    data = json.loads(response.data)
-    assert "Missing message data" in data["error"]
-
-
-def test_handle_gcs_event_invalid_base64(client):
-    """Test GCS event handling with invalid base64 data."""
-    pubsub_message = {"message": {"data": "invalid-base64-data", "attributes": {}}}
-
-    response = client.post("/api/batch/gcs-event", data=json.dumps(pubsub_message), content_type="application/json")
-
-    assert response.status_code == 400
-    data = json.loads(response.data)
-    assert "Invalid message data encoding" in data["error"]
+    assert "No data in CloudEvent" in data["error"]
 
 
 def test_handle_gcs_event_exception(client, mock_batch_processor):
     """Test GCS event handling with exception."""
-    event_data = {"bucketId": "test-bucket", "objectId": "test-file.csv"}
-    encoded_data = base64.b64encode(json.dumps(event_data).encode()).decode()
-
-    pubsub_message = {"message": {"data": encoded_data, "attributes": {}}}
+    headers, data = create_cloudevent_request("test-bucket", "test-file.csv")
 
     # Mock processor to raise exception
     mock_batch_processor.process_gcs_event.side_effect = Exception("Unexpected error")
 
-    response = client.post("/api/batch/gcs-event", data=json.dumps(pubsub_message), content_type="application/json")
+    response = client.post("/api/batch/gcs-event", data=data, headers=headers)
 
     assert response.status_code == 500
     data = json.loads(response.data)

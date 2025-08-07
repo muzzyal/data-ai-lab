@@ -32,6 +32,7 @@ resource "google_eventarc_trigger" "gcs_cloud_run_trigger" {
     cloud_run_service {
       service = var.cloud_run_service_name
       region  = var.location
+      path    = var.endpoint
     }
   }
 

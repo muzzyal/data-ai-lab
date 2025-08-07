@@ -8,5 +8,10 @@ module "event_arc_pubsub_bigquery" {
   cloud_storage_bucket   = google_storage_bucket.playground_bucket.name
   cloud_run_service_name = google_cloud_run_service.batch_ingest.name
   service_account_email  = var.service_account_email
+  endpoint               = "/api/batch/gcs-event"
+
+  depends_on = [
+    google_cloud_run_service.batch_ingest
+  ]
 
 }
