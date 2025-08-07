@@ -57,7 +57,7 @@ module "playground_project" {
   project_id                      = var.project_id
   project_no                      = var.project_no
   dataset_id                      = module.playground_datasets.raw_dataset_name
-  cloud_run_batch_ingest_version  = "0.2.0"
+  cloud_run_batch_ingest_version  = "0.3.0"
   cloud_run_stream_ingest_version = "0.1.0"
   pubsub_topic_name               = "playground_project_topic"
   dlq_topic_name                  = "playground_project_dlq"

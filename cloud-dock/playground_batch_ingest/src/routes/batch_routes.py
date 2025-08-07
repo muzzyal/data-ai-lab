@@ -7,6 +7,7 @@ import json
 import logging
 from typing import Any, Dict
 
+from cloudevents.http import from_http
 from flask import Blueprint, jsonify, request
 
 from playground_batch_ingest.src.config_loader.loader import config_loader
@@ -26,39 +27,33 @@ def get_batch_processor() -> BatchProcessor:
 @batch_bp.route("/gcs-event", methods=["POST"])
 def handle_gcs_event():
     """
-    Handle GCS file creation events from Pub/Sub.
+    Handle GCS file creation events from Eventarc CloudEvents.
 
-    Expected Pub/Sub message format:
+    Expected CloudEvent format from Eventarc:
     {
-        "message": {
-            "data": "<base64-encoded-json>",
-            "attributes": {...},
-            "messageId": "...",
-            "publishTime": "..."
+        "specversion": "1.0",
+        "type": "google.cloud.storage.object.v1.finalized",
+        "source": "//storage.googleapis.com/projects/_/buckets/bucket-name",
+        "id": "unique-event-id",
+        "time": "2023-01-01T12:00:00Z",
+        "datacontenttype": "application/json",
+        "data": {
+            "bucket": "bucket-name",
+            "name": "file.csv",
+            "generation": "123456"
         }
     }
     """
     try:
-        # Parse Pub/Sub message
-        request_json = request.get_json()
+        # Parse CloudEvent from Eventarc
+        event = from_http(request.headers, request.get_data())
+        logger.info(f"Received CloudEvent: {event}")
 
-        if not request_json or "message" not in request_json:
-            logger.error("Invalid Pub/Sub message format")
-            return jsonify({"error": "Invalid message format"}), 400
-
-        message = request_json["message"]
-
-        # Decode base64 data
-        if "data" not in message:
-            logger.error("Missing data in Pub/Sub message")
-            return jsonify({"error": "Missing message data"}), 400
-
-        try:
-            message_data = base64.b64decode(message["data"]).decode("utf-8")
-            event_data = json.loads(message_data)
-        except (ValueError, json.JSONDecodeError) as e:
-            logger.error(f"Error decoding message data: {e}")
-            return jsonify({"error": "Invalid message data encoding"}), 400
+        # Extract GCS event data
+        event_data = event.data
+        if not event_data:
+            logger.error("No data in CloudEvent")
+            return jsonify({"error": "No data in CloudEvent"}), 400
 
         # Log the event
         logger.info(f"Received GCS event: {event_data}")
