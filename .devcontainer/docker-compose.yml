@@ -7,6 +7,8 @@ services:
       dockerfile: ./.devcontainer/Dockerfile
     container_name: python-tf
     env_file: .env
+    ports:
+      - "8000:8000"
     volumes:
       - ..:/workspaces
       - ./.bashrc:/home/vscode/.bashrc

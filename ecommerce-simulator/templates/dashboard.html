@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Data Simulator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #3a85fc 0%, #86bdff 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid #f0f0f0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            font-size: 1.5em;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .control-group input, .control-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .control-group input:focus, .control-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slider {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            background: #5a67d8;
+        }
+
+        .slider-value {
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .stats-panel {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .stats-panel h3 {
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 E-commerce Data Simulator</h1>
+            <p>Generate and send realistic e-commerce data to your microservices</p>
+        </div>
+
+        <div class="dashboard">
+            <div class="main-content">
+                <!-- Stream Transactions -->
+                <div class="card">
+                    <h3><span class="icon">⚡</span>Stream Transactions</h3>
+                    <div class="control-group">
+                        <label>Number of Transactions</label>
+                        <div class="slider-container">
+                            <input type="range" id="transactionSlider" class="slider" min="1" max="1000" value="50">
+                            <span class="slider-value" id="transactionValue">50</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>Delay Between Transactions (ms)</label>
+                        <div class="slider-container">
+                            <input type="range" id="delaySlider" class="slider" min="0" max="2000" value="100" step="50">
+                            <span class="slider-value" id="delayValue">100</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="sendTransactions()">
+                        Send Transactions
+                    </button>
+                    <div class="loading" id="transactionLoading">
+                        <div class="spinner"></div> Sending transactions...
+                    </div>
+                    <div id="transactionMessage"></div>
+                </div>
+
+                <!-- Upload Products -->
+                <div class="card">
+                    <h3><span class="icon">📦</span>Upload Products</h3>
+                    <div class="control-group">
+                        <label>Number of Products</label>
+                        <div class="slider-container">
+                            <input type="range" id="productSlider" class="slider" min="1" max="500" value="50">
+                            <span class="slider-value" id="productValue">50</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-success" onclick="uploadProducts()">
+                        Generate & Upload Products
+                    </button>
+                    <div class="loading" id="productLoading">
+                        <div class="spinner"></div> Uploading products...
+                    </div>
+                    <div id="productMessage"></div>
+                </div>
+
+                <!-- Upload Shops -->
+                <div class="card">
+                    <h3><span class="icon">🏪</span>Upload Shops</h3>
+                    <div class="control-group">
+                        <label>Number of Shops</label>
+                        <div class="slider-container">
+                            <input type="range" id="shopSlider" class="slider" min="1" max="100" value="20">
+                            <span class="slider-value" id="shopValue">20</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-warning" onclick="uploadShops()">
+                        Generate & Upload Shops
+                    </button>
+                    <div class="loading" id="shopLoading">
+                        <div class="spinner"></div> Uploading shops...
+                    </div>
+                    <div id="shopMessage"></div>
+                </div>
+
+                <!-- Upload Batch Transactions -->
+                <div class="card">
+                    <h3><span class="icon">📊</span>Batch Transactions</h3>
+                    <div class="control-group">
+                        <label>Number of Transactions</label>
+                        <div class="slider-container">
+                            <input type="range" id="batchSlider" class="slider" min="1" max="10000" value="100">
+                            <span class="slider-value" id="batchValue">100</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-danger" onclick="uploadBatchTransactions()">
+                        Generate & Upload to GCS
+                    </button>
+                    <div class="loading" id="batchLoading">
+                        <div class="spinner"></div> Uploading batch...
+                    </div>
+                    <div id="batchMessage"></div>
+                </div>
+            </div>
+
+            <!-- Statistics Panel -->
+            <div class="stats-panel">
+                <h3>📈 Statistics</h3>
+                <div class="stat-item">
+                    <span class="stat-label">Transactions Sent:</span>
+                    <span class="stat-value" id="statTransactions">{{ stats.transactions_sent }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Products Uploaded:</span>
+                    <span class="stat-value" id="statProducts">{{ stats.products_uploaded }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Shops Uploaded:</span>
+                    <span class="stat-value" id="statShops">{{ stats.shops_uploaded }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Batch Transactions:</span>
+                    <span class="stat-value" id="statBatchTransactions">{{ stats.batch_transactions_uploaded }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Last Activity:</span>
+                    <span class="stat-value" id="statLastActivity">
+                        {{ stats.last_activity[:19] if stats.last_activity else 'None' }}
+                    </span>
+                </div>
+
+                <button class="btn btn-primary" onclick="refreshStats()" style="margin-top: 20px;">
+                    Refresh Stats
+                </button>
+
+                <button class="btn btn-danger" onclick="resetStats()" style="margin-top: 10px;">
+                    Reset Stats
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update slider values
+        function updateSliderValue(sliderId, valueId) {
+            const slider = document.getElementById(sliderId);
+            const value = document.getElementById(valueId);
+            slider.oninput = function() {
+                value.textContent = this.value;
+            }
+        }
+
+        updateSliderValue('transactionSlider', 'transactionValue');
+        updateSliderValue('delaySlider', 'delayValue');
+        updateSliderValue('productSlider', 'productValue');
+        updateSliderValue('shopSlider', 'shopValue');
+        updateSliderValue('batchSlider', 'batchValue');
+
+        // API functions
+        async function sendTransactions() {
+            const count = document.getElementById('transactionSlider').value;
+            const delay = document.getElementById('delaySlider').value;
+            const loading = document.getElementById('transactionLoading');
+            const message = document.getElementById('transactionMessage');
+
+            loading.style.display = 'block';
+            message.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/send-transactions', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({count: parseInt(count), delay: parseInt(delay)})
+                });
+
+                const result = await response.json();
+                loading.style.display = 'none';
+
+                if (result.success) {
+                    message.innerHTML = `<div class="message success">✅ Sent ${result.sent}/${result.total_requested} transactions successfully!</div>`;
+                    refreshStats();
+                } else {
+                    message.innerHTML = `<div class="message error">❌ Error: ${result.error}</div>`;
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                message.innerHTML = `<div class="message error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function uploadProducts() {
+            const count = document.getElementById('productSlider').value;
+            const loading = document.getElementById('productLoading');
+            const message = document.getElementById('productMessage');
+
+            loading.style.display = 'block';
+            message.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/upload-products', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({count: parseInt(count)})
+                });
+
+                const result = await response.json();
+                loading.style.display = 'none';
+
+                if (result.success) {
+                    message.innerHTML = `<div class="message success">✅ Uploaded ${result.count} products as ${result.filename}</div>`;
+                    refreshStats();
+                } else {
+                    message.innerHTML = `<div class="message error">❌ Error: ${result.error}</div>`;
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                message.innerHTML = `<div class="message error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function uploadShops() {
+            const count = document.getElementById('shopSlider').value;
+            const loading = document.getElementById('shopLoading');
+            const message = document.getElementById('shopMessage');
+
+            loading.style.display = 'block';
+            message.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/upload-shops', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({count: parseInt(count)})
+                });
+
+                const result = await response.json();
+                loading.style.display = 'none';
+
+                if (result.success) {
+                    message.innerHTML = `<div class="message success">✅ Uploaded ${result.count} shops as ${result.filename}</div>`;
+                    refreshStats();
+                } else {
+                    message.innerHTML = `<div class="message error">❌ Error: ${result.error}</div>`;
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                message.innerHTML = `<div class="message error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function uploadBatchTransactions() {
+            const count = document.getElementById('batchSlider').value;
+            const loading = document.getElementById('batchLoading');
+            const message = document.getElementById('batchMessage');
+
+            loading.style.display = 'block';
+            message.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/upload-batch-transactions', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({count: parseInt(count)})
+                });
+
+                const result = await response.json();
+                loading.style.display = 'none';
+
+                if (result.success) {
+                    message.innerHTML = `<div class="message success">✅ Uploaded ${result.count} transactions as ${result.filename}</div>`;
+                    refreshStats();
+                } else {
+                    message.innerHTML = `<div class="message error">❌ Error: ${result.error}</div>`;
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                message.innerHTML = `<div class="message error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function refreshStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const stats = await response.json();
+
+                document.getElementById('statTransactions').textContent = stats.transactions_sent;
+                document.getElementById('statProducts').textContent = stats.products_uploaded;
+                document.getElementById('statShops').textContent = stats.shops_uploaded;
+                document.getElementById('statBatchTransactions').textContent = stats.batch_transactions_uploaded;
+                document.getElementById('statLastActivity').textContent =
+                    stats.last_activity ? stats.last_activity.substring(0, 19) : 'None';
+            } catch (error) {
+                console.error('Failed to refresh stats:', error);
+            }
+        }
+
+        async function resetStats() {
+            if (confirm('Are you sure you want to reset all statistics?')) {
+                try {
+                    const response = await fetch('/api/reset-stats', {method: 'POST'});
+                    if (response.ok) {
+                        refreshStats();
+                    }
+                } catch (error) {
+                    console.error('Failed to reset stats:', error);
+                }
+            }
+        }
+
+        // Auto-refresh stats every 30 seconds
+        setInterval(refreshStats, 30000);
+    </script>
+</body>
+</html>

@@ -41,3 +41,9 @@ run-docker-image:
 
 test-coverage:
 	python3 -m pytest --cov=$(APP).src --cov-report=xml --cov-report=html --cov-report=term --cov-branch
+
+ecommerce-simulator:
+	@echo "Running ecommerce simulator..."
+	@cd ecommerce-simulator && python3 app.py
+
+.PHONY: tf-init-infra-init tf-plan-infra-init tf-apply-infra-init create-backend-infra-init migrate-state-infra-init create-docker-image run-docker-image test-coverage ecommerce-simulator
