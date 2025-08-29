@@ -53,13 +53,21 @@ jobs:
         run: |
           cd definitions
           echo "Checking if files need formatting..."
-          # Use diff to check if format would make changes
+          # Check if formatting would make changes
           for file in *.sqlx; do
             if [ -f "$file" ]; then
               echo "Checking formatting for $file..."
-              if ! sqlfluff format --dialect bigquery "$file" --diff | grep -q "No fixes to apply"; then
+              # Create a temporary formatted version
+              sqlfluff format --dialect bigquery "$file" > "${file}.formatted"
+              # Compare original with formatted version
+              if ! cmp -s "$file" "${file}.formatted"; then
                 echo "ERROR: $file needs formatting. Run 'sqlfluff format $file' to fix."
+                echo "Differences found:"
+                diff "$file" "${file}.formatted" || true
+                rm "${file}.formatted"
                 exit 1
               fi
+              rm "${file}.formatted"
+              echo "✓ $file is properly formatted"
             fi
           done
