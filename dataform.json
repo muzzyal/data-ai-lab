@@ -1,0 +1,7 @@
+{
+    "warehouse": "bigquery",
+    "defaultDatabase": "muz-designed-msc-data-ai-2025",
+    "defaultSchema": "msc_data_ai",
+    "assertionSchema": "msc_data_ai_assertions",
+    "defaultLocation": "europe-west2"
+}

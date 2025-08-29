@@ -1,0 +1,51 @@
+name: SQL Definitions Check - PR
+run-name: ${{ github.actor }} triggered SQL checks
+
+on:
+  pull_request:
+    paths:
+      - 'definitions/**'
+
+jobs:
+  sql-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install SQLFluff
+        run: |
+          pip install sqlfluff
+
+      - name: Create SQLFluff config
+        run: |
+          cd definitions
+          # Create updated .sqlfluff config with correct syntax
+          cat > .sqlfluff << EOF
+          [sqlfluff]
+          dialect = bigquery
+          templater = jinja
+          max_line_length = 120
+
+          [sqlfluff:indentation]
+          indented_joins = false
+          indented_using_on = true
+          template_blocks_indent = false
+          tab_space_size = 2
+          indent_unit = space
+
+          [sqlfluff:layout:type:comma]
+          line_position = trailing
+          EOF
+
+      - name: Lint and check SQL formatting
+        run: |
+          cd definitions
+          echo "Running SQLFluff lint and format check..."
+          # SQLFluff lint will catch both syntax and formatting issues
+          sqlfluff lint *.sqlx --dialect bigquery
