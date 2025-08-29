@@ -22,16 +22,44 @@ jobs:
         run: |
           pip install sqlfluff
 
+      - name: Create SQLFluff config
+        run: |
+          cd definitions
+          # Create updated .sqlfluff config with correct syntax
+          cat > .sqlfluff << EOF
+          [sqlfluff]
+          dialect = bigquery
+          templater = jinja
+          max_line_length = 120
+
+          [sqlfluff:indentation]
+          indented_joins = false
+          indented_using_on = true
+          template_blocks_indent = false
+          tab_space_size = 2
+          indent_unit = space
+
+          [sqlfluff:layout:type:comma]
+          line_position = trailing
+          EOF
+
       - name: Lint SQL files with SQLFluff
         run: |
           cd definitions
-          # Run SQLFluff lint - this will fail the job if issues are found
           echo "Running SQLFluff lint check..."
           sqlfluff lint *.sqlx --dialect bigquery
 
       - name: Check SQL formatting
         run: |
           cd definitions
-          echo "Checking SQL formatting compliance..."
-          # This will fail if formatting is not compliant
-          sqlfluff format --check --dialect bigquery *.sqlx
+          echo "Checking if files need formatting..."
+          # Use diff to check if format would make changes
+          for file in *.sqlx; do
+            if [ -f "$file" ]; then
+              echo "Checking formatting for $file..."
+              if ! sqlfluff format --dialect bigquery "$file" --diff | grep -q "No fixes to apply"; then
+                echo "ERROR: $file needs formatting. Run 'sqlfluff format $file' to fix."
+                exit 1
+              fi
+            fi
+          done
