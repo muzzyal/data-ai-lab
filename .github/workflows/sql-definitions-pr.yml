@@ -43,20 +43,9 @@ jobs:
           line_position = trailing
           EOF
 
-      - name: Lint SQL files with SQLFluff
+      - name: Lint and check SQL formatting
         run: |
           cd definitions
-          echo "Running SQLFluff lint check..."
+          echo "Running SQLFluff lint and format check..."
+          # SQLFluff lint will catch both syntax and formatting issues
           sqlfluff lint *.sqlx --dialect bigquery
-
-      - name: Check SQL formatting
-        run: |
-          cd definitions
-          echo "Checking if files need formatting..."
-          # Use sqlfluff fix in dry-run mode to check for formatting issues
-          if ! sqlfluff fix --dialect bigquery *.sqlx --dry-run --quiet; then
-            echo "ERROR: SQL files have formatting issues that need to be fixed."
-            echo "Run 'sqlfluff fix *.sqlx --dialect bigquery' to fix formatting issues."
-            exit 1
-          fi
-          echo "✓ All SQL files are properly formatted"
