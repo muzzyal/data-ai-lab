@@ -1,0 +1,37 @@
+name: SQL Definitions Check - PR
+run-name: ${{ github.actor }} triggered SQL checks
+
+on:
+  pull_request:
+    paths:
+      - 'definitions/**'
+
+jobs:
+  sql-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install SQLFluff
+        run: |
+          pip install sqlfluff
+
+      - name: Lint SQL files with SQLFluff
+        run: |
+          cd definitions
+          # Run SQLFluff lint - this will fail the job if issues are found
+          echo "Running SQLFluff lint check..."
+          sqlfluff lint *.sqlx --dialect bigquery
+
+      - name: Check SQL formatting
+        run: |
+          cd definitions
+          echo "Checking SQL formatting compliance..."
+          # This will fail if formatting is not compliant
+          sqlfluff format --check --dialect bigquery *.sqlx
