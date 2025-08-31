@@ -29,7 +29,6 @@ TRANSACTION_SCHEMA = {
             "description": "Transaction amount",
             "minimum": 0.01,
             "maximum": 1000000.00,
-            "multipleOf": 0.01,
         },
         "currency": {
             "type": "string",

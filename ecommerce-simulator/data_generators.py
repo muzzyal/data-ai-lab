@@ -77,13 +77,17 @@ def generate_products(count: int) -> List[Dict]:
         base_name = random.choice(PRODUCT_NAMES[category])
         brand = generate_brand_name()
 
+        # Use integer cents to avoid floating point precision issues
+        price_cents = random.randint(599, 99999)  # 5.99 to 999.99 in cents
+        cost_cents = random.randint(299, 59999)  # 2.99 to 599.99 in cents
+
         product = {
             "product_id": f"PROD_{uuid.uuid4().hex[:8].upper()}",
             "name": f"{brand} {base_name}",
             "category": category,
             "brand": brand,
-            "price": round(random.uniform(5.99, 999.99), 2),
-            "cost": round(random.uniform(2.99, 599.99), 2),
+            "price": price_cents / 100.0,
+            "cost": cost_cents / 100.0,
             "stock_quantity": random.randint(0, 500),
             "description": f"High-quality {base_name.lower()} from {brand}",
             "weight": round(random.uniform(0.1, 10.0), 2),
@@ -140,49 +144,72 @@ def generate_transactions(count: int, transaction_type: str = "stream") -> List[
 
     for i in range(count):
         if transaction_type == "stream":
-            # Generate transaction for stream service (matches exact schema)
-            amount = round(random.uniform(0.01, 1000.0), 2)
+            # Generate transaction for stream service with rich data matching schema
+            # Use integer cents then divide to avoid floating point precision issues
+            amount_cents = random.randint(1000, 500000)  # 10.00 to 5000.00 in cents
+            amount = amount_cents / 100.0
 
-            # Payment method object as expected by schema (only 'type' is required)
+            # Enhanced payment method objects matching schema requirements
             payment_methods = [
-                {"type": "credit_card"},
-                {"type": "debit_card"},
-                {"type": "digital_wallet"},
-                {"type": "bank_transfer"},
+                {
+                    "type": "credit_card",
+                    "last_four": str(random.randint(1000, 9999)),
+                    "provider": random.choice(["Visa", "Mastercard", "Amex", "Discover"]),
+                },
+                {
+                    "type": "debit_card",
+                    "last_four": str(random.randint(1000, 9999)),
+                    "provider": random.choice(["Visa", "Mastercard"]),
+                },
+                {"type": "digital_wallet", "provider": random.choice(["Apple Pay", "Google Pay", "PayPal", "Stripe"])},
+                {"type": "bank_transfer", "provider": "Bank Transfer"},
                 {"type": "cash"},
             ]
 
+            # Location data matching schema (ISO country codes)
+            locations = [
+                {"country": "US", "city": "New York", "postal_code": "10001"},
+                {"country": "GB", "city": "London", "postal_code": "SW1A 1AA"},
+                {"country": "CA", "city": "Toronto", "postal_code": "M5V 3A8"},
+                {"country": "DE", "city": "Berlin", "postal_code": "10115"},
+                {"country": "AU", "city": "Sydney", "postal_code": "2000"},
+                {"country": "IN", "city": "Mumbai", "postal_code": "400001"},
+                {"country": "JP", "city": "Tokyo", "postal_code": "100-0001"},
+            ]
+
+            # Generate transaction matching exact schema structure
             transaction = {
-                "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
-                "customer_id": random.choice(customer_ids),
+                "transaction_id": f"txn_{uuid.uuid4().hex[:8]}",
+                "customer_id": f"cust_{uuid.uuid4().hex[:8]}",
                 "amount": amount,
-                "currency": random.choice(["USD", "EUR", "GBP", "CAD", "AUD"]),  # Valid currencies
-                "transaction_type": random.choice(["purchase", "refund", "deposit"]),
-                "timestamp": generate_recent_timestamp(hours_back=24),
+                "currency": random.choice(["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "INR"]),
+                "transaction_type": random.choice(["purchase", "refund", "transfer", "deposit", "withdrawal"]),
+                "timestamp": generate_recent_timestamp(hours_back=168),  # Last week
                 "payment_method": random.choice(payment_methods),
-                # Optional fields
+                # Optional fields that make it richer
                 "merchant_id": f"merch_{uuid.uuid4().hex[:8]}",
-                "description": random.choice(
-                    [
-                        "Online purchase",
-                        "Store transaction",
-                        "Mobile payment",
-                        "Subscription payment",
-                        "Service payment",
-                    ]
-                ),
+                "description": f"Transaction {uuid.uuid4().hex[:5]} - {random.choice(['Online purchase', 'Store transaction', 'Mobile payment', 'Service payment', 'Subscription renewal'])}",
+                "location": random.choice(locations),
                 "metadata": {
-                    "channel": random.choice(["web", "mobile", "pos", "api"]),
+                    "batch_index": i,
+                    "data_type": "transaction",
+                    "message_id": str(uuid.uuid4()),
+                    "source": random.choice(["web", "mobile", "pos", "api"]),
                     "category": random.choice(["retail", "food", "entertainment", "transport", "utilities"]),
+                    "session_id": f"sess_{uuid.uuid4().hex[:16]}",
                 },
             }
         else:
             # Generate transaction for batch processing (detailed ecommerce data)
             quantity = random.randint(1, 5)
-            unit_price = round(random.uniform(5.99, 299.99), 2)
-            subtotal = round(quantity * unit_price, 2)
-            tax = round(subtotal * 0.20, 2)  # UK VAT
-            total = subtotal + tax
+            # Use integer cents to avoid floating point precision issues
+            unit_price_cents = random.randint(599, 29999)  # 5.99 to 299.99 in cents
+            unit_price = unit_price_cents / 100.0
+            subtotal_cents = quantity * unit_price_cents
+            subtotal = subtotal_cents / 100.0
+            tax_cents = int(subtotal_cents * 0.20)  # UK VAT, keep as integer
+            tax = tax_cents / 100.0
+            total = (subtotal_cents + tax_cents) / 100.0
 
             transaction = {
                 "transaction_id": f"TXN_{uuid.uuid4().hex[:12].upper()}",
